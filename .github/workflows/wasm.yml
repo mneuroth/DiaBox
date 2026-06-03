@@ -1,0 +1,60 @@
+name: Qt WASM Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*' # Löst den Release-Workflow bei Version-Tags aus
+
+jobs:
+  build_wasm:
+    name: Build Qt WebAssembly
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Code auschecken
+        uses: actions/checkout@v4
+
+      - name: Qt installieren
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.11.0' # Passen Sie dies an Ihre genaue Qt-Version an
+          target: 'wasm'
+          dir: ${{ runner.temp }}/Qt
+          install-deps: 'true'
+
+      - name: Emscripten Toolchain einrichten
+        uses: mymindstorm/setup-emsdk@v16
+        with:
+          version: '3.1.50' # Die für Ihre Qt-Version empfohlene Emscripten-Version
+
+      - name: Build-Verzeichnis erstellen
+        run: mkdir build
+
+      - name: CMake Konfiguration (WASM)
+        run: |
+          source ${{ steps.setup-emsdk.outputs.emsdk_env }}
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_TOOLCHAIN_FILE=${EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DQt6_DIR=${{ runner.temp }}/Qt/6.11.0/wasm_wasm/lib/cmake/Qt6
+
+      - name: Anwendung kompilieren
+        run: cmake --build build --parallel
+
+      - name: Artefakte für Release vorbereiten
+        run: |
+          mkdir -p release_files
+          # Kopieren Sie die generierten WASM-Dateien (z. B. DiaBox.wasm, .js, .html)
+          # Passen Sie den Namen an Ihr Projekt an
+          cp build/DiaBox.wasm release_files/
+          cp build/DiaBox.js release_files/
+          cp build/DiaBox.html release_files/
+          # Bei Qt 6 fügt der Deploy-Schritt oft noch spezifische Templates hinzu
+          
+      - name: GitHub Release erstellen
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: release_files/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
