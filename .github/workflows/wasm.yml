@@ -26,13 +26,16 @@ jobs:
         env:
           QT_MIRROR: https://download.qt.io/online/qtsdkrepository/
         run: |
-          aqt install-qt linux desktop 6.6.3 gcc_64
+          aqt install-qt linux desktop 6.6.3 gcc_64 \
+            --outputdir ${{ runner.temp }}/Qt/Qt \
           aqt list-qt linux desktop --modules 6.6.3 wasm_singlethread
           aqt install-qt linux desktop 6.6.3 wasm_singlethread \
             --outputdir ${{ runner.temp }}/Qt \
           #  -m qtbase qtdeclarative qttranslations qttools \
           # see: https://download.qt.io/online/qtsdkrepository/windows_x86/wasm/qt6_7_3/qt6_673_wasm_singlethread/
           # see: https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_663_wasm_singlethread/
+          ls -lrt ${{ runner.temp }}/Qt/Qt
+          ls -lrt ${{ runner.temp }}/Qt
 
       - name: Emscripten Toolchain einrichten
         uses: mymindstorm/setup-emsdk@v16
@@ -57,6 +60,8 @@ jobs:
       - name: CMake Konfiguration (WASM)
         run: |
           export QT_PATH=${{ runner.temp }}/Qt/6.6.3/wasm_singlethread
+          export QT_PATH_WASM=/home/runner/.../Qt/6.6.3/wasm_singlethread
+          export QT_PATH_HOST=/home/runner/.../Qt/6.6.3/gcc_64
           export EMSDK_PATH=$(dirname $(which emcc))/..
           
           cmake -S . -B build \
@@ -64,6 +69,7 @@ jobs:
             -DCMAKE_PREFIX_PATH=$QT_PATH/lib/cmake \
             -DQt6_DIR=$QT_PATH/lib/cmake/Qt6 \
             -DCMAKE_BUILD_TYPE=Release \
+            -DQT_HOST_PATH=$QT_PATH_HOST \
             -G Ninja
 
       - name: Anwendung kompilieren
