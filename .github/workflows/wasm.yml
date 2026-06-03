@@ -23,11 +23,12 @@ jobs:
         run: pip install aqtinstall==3.3.0
 
       - name: Qt 6.7.3 WASM installieren
+        env:
+          QT_MIRROR: https://download.qt.io/online/qtsdkrepository/
         run: |
           aqt install-qt linux desktop 6.7.3 wasm_singlethread \
             -m qtbase qtdeclarative qttranslations qttools \
             --outputdir ${{ runner.temp }}/Qt \
-            --mirror https://download.qt.io/online/qtsdkrepository/
 
       - name: Emscripten Toolchain einrichten
         uses: mymindstorm/setup-emsdk@v16
