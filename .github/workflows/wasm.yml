@@ -26,10 +26,11 @@ jobs:
         env:
           QT_MIRROR: https://download.qt.io/online/qtsdkrepository/
         run: |
+          aqt install-qt linux desktop 6.6.3 gcc_64
           aqt list-qt linux desktop --modules 6.6.3 wasm_singlethread
           aqt install-qt linux desktop 6.6.3 wasm_singlethread \
-            -m qtbase qtdeclarative qttranslations qttools \
             --outputdir ${{ runner.temp }}/Qt \
+          #  -m qtbase qtdeclarative qttranslations qttools \
 
       - name: Emscripten Toolchain einrichten
         uses: mymindstorm/setup-emsdk@v16
