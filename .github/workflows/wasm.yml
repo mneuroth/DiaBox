@@ -18,8 +18,9 @@ jobs:
         uses: jurplel/install-qt-action@v4
         with:
           version: '6.7.3' # Passen Sie dies an Ihre genaue Qt-Version an
-          target: 'desktop'        # Wichtig: Bei Qt 6 WASM wird "desktop" als Target und "wasm_singlethread" oder "wasm_multithread" als Arch angegeben
-          arch: 'wasm_singlethread' # Oder 'wasm_multithread', je nachdem was Sie nutzen möchten
+          target: 'wasm'        # Bei Qt 5 war es "wasm", bei Qt 6 wird "desktop" als Target verwendet
+          #target: 'desktop'        # Wichtig: Bei Qt 6 WASM wird "desktop" als Target und "wasm_singlethread" oder "wasm_multithread" als Arch angegeben
+          #arch: 'wasm_singlethread' # Oder 'wasm_multithread', je nachdem was Sie nutzen möchten
           aqtversion: '==3.3.*'     # Erzwingt eine neuere Version des Tools, die das neue Qt 6.7.3 Layout versteht
           dir: ${{ runner.temp }}/Qt
           install-deps: 'true'
