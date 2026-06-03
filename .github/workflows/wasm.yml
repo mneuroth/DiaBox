@@ -65,11 +65,13 @@ jobs:
       - name: CMake Konfiguration (WASM)
         run: |
           export QT_PATH=${{ runner.temp }}/Qt/6.6.3/wasm_singlethread
-          export QT_PATH_WASM=/home/runner/.../Qt/6.6.3/wasm_singlethread
+          export QT_PATH_WASM=${{ runner.temp }}/Qt/6.6.3/wasm_singlethread
           export QT_PATH_HOST=${{ runner.temp }}/Qt/Qt/6.6.3/gcc_64
           export EMSDK_PATH=$(dirname $(which emcc))/..
           
           echo "QT_PATH: $QT_PATH"
+          echo "QT_PATH_HOST: $QT_PATH_HOST"
+          echo "QT_PATH_WASM: $QT_PATH_WASM"
           ls -lrt $QT_PATH_HOST
           ls -lrt $QT_PATH_WASM
           echo "done."
