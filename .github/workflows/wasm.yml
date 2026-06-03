@@ -14,32 +14,41 @@ jobs:
       - name: Code auschecken
         uses: actions/checkout@v4
 
-      - name: Qt installieren
-        uses: jurplel/install-qt-action@v4
+      - name: Python einrichten
+        uses: actions/setup-python@v4
         with:
-          version: '6.7.3' # Passen Sie dies an Ihre genaue Qt-Version an
-          target: 'wasm'        # Bei Qt 5 war es "wasm", bei Qt 6 wird "desktop" als Target verwendet
-          #target: 'desktop'        # Wichtig: Bei Qt 6 WASM wird "desktop" als Target und "wasm_singlethread" oder "wasm_multithread" als Arch angegeben
-          #arch: 'wasm_singlethread' # Oder 'wasm_multithread', je nachdem was Sie nutzen möchten
-          aqtversion: '==3.3.*'     # Erzwingt eine neuere Version des Tools, die das neue Qt 6.7.3 Layout versteht
-          dir: ${{ runner.temp }}/Qt
-          install-deps: 'true'
+          python-version: '3.11'
+
+      - name: aqtinstall installieren
+        run: pip install aqtinstall==3.3.0
+
+      - name: Qt 6.7.3 WASM installieren
+        run: |
+          aqt install-qt linux desktop 6.7.3 wasm_singlethread \
+            -m qtbase qtdeclarative qttranslations qttools \
+            --outputdir ${{ runner.temp }}/Qt \
+            --mirror https://download.qt.io/online/qtsdkrepository/
 
       - name: Emscripten Toolchain einrichten
         uses: mymindstorm/setup-emsdk@v16
         with:
-          version: '3.1.50' # Die für Ihre Qt-Version empfohlene Emscripten-Version
+          version: '3.1.57'
+          actions-on-failure: 'warn'
 
       - name: Build-Verzeichnis erstellen
-        run: mkdir build
+        run: mkdir -p build
 
       - name: CMake Konfiguration (WASM)
         run: |
-          source ${{ steps.setup-emsdk.outputs.emsdk_env }}
-          cmake -S . -B build -G Ninja \
-            -DCMAKE_TOOLCHAIN_FILE=${EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
+          export QT_PATH=${{ runner.temp }}/Qt/6.7.3/wasm_singlethread
+          export EMSDK_PATH=$(dirname $(which emcc))/..
+          
+          cmake -S . -B build \
+            -DCMAKE_TOOLCHAIN_FILE=${EMSDK_PATH}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
+            -DCMAKE_PREFIX_PATH=$QT_PATH/lib/cmake \
+            -DQt6_DIR=$QT_PATH/lib/cmake/Qt6 \
             -DCMAKE_BUILD_TYPE=Release \
-            -DQt6_DIR=${{ runner.temp }}/Qt/6.7.3/wasm_singlethread/lib/cmake/Qt6
+            -G Ninja
 
       - name: Anwendung kompilieren
         run: cmake --build build --parallel
@@ -47,12 +56,16 @@ jobs:
       - name: Artefakte für Release vorbereiten
         run: |
           mkdir -p release_files
-          # Kopieren Sie die generierten WASM-Dateien (z. B. DiaBox.wasm, .js, .html)
-          # Passen Sie den Namen an Ihr Projekt an
-          cp build/DiaBox.wasm release_files/
-          cp build/DiaBox.js release_files/
-          cp build/DiaBox.html release_files/
-          # Bei Qt 6 fügt der Deploy-Schritt oft noch spezifische Templates hinzu
+          
+          # Findet alle WASM-Ausgabedateien (z.B. .wasm, .js, .html, .css)
+          find build -type f \( -name "*.wasm" -o -name "*.js" -o -name "*.html" -o -name "*.css" \) -exec cp {} release_files/ \;
+          
+          # Falls Sie noch zusätzliche Dateien benötigen (z.B. Ressourcen):
+          if [ -d "build/DiaBox" ]; then
+            cp -r build/DiaBox/* release_files/ 2>/dev/null || true
+          fi
+          
+          ls -la release_files/
           
       - name: GitHub Release erstellen
         uses: softprops/action-gh-release@v2
