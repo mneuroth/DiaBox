@@ -83,6 +83,7 @@ jobs:
             -DCMAKE_PREFIX_PATH=$QT_PATH/lib/cmake \
             -DQt6_DIR=$QT_PATH/lib/cmake/Qt6 \
             -DQt6Quick_DIR=$QT_PATH/lib/cmake/Qt6Quick \
+            -DQt6Core_DIR=$QT_PATH/lib/cmake/Qt6Core \
             -DCMAKE_BUILD_TYPE=Release \
             -DQT_HOST_PATH=$QT_PATH_HOST \
             -G Ninja
