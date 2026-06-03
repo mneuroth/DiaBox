@@ -35,6 +35,7 @@ jobs:
           #  -m qtbase qtdeclarative qttranslations qttools \
           # see: https://download.qt.io/online/qtsdkrepository/windows_x86/wasm/qt6_7_3/qt6_673_wasm_singlethread/
           # see: https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_663_wasm_singlethread/
+          # see: https://download.qt.io/online/qtsdkrepository/linux_x64/wasm/qt6_7_3/qt6_673_wasm_singlethread/
           echo "abc"
           ls -lrt ${{ runner.temp }}/Qt/Qt
           ls -lrt ${{ runner.temp }}/Qt/Qt/6.6.3
@@ -84,6 +85,7 @@ jobs:
             -DQt6_DIR=$QT_PATH/lib/cmake/Qt6 \
             -DQt6Quick_DIR=$QT_PATH/lib/cmake/Qt6Quick \
             -DQt6Core_DIR=$QT_PATH/lib/cmake/Qt6Core \
+            -DQt6BundledZLIB_DIR=$QT_PATH/lib/cmake/Qt6BundledZLIB \
             -DCMAKE_BUILD_TYPE=Release \
             -DQT_HOST_PATH=$QT_PATH_HOST \
             -G Ninja
