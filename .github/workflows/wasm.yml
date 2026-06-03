@@ -26,6 +26,7 @@ jobs:
         env:
           QT_MIRROR: https://download.qt.io/online/qtsdkrepository/
         run: |
+          aqt list-qt linux desktop --modules 6.6.3 wasm_singlethread
           aqt install-qt linux desktop 6.6.3 wasm_singlethread \
             -m qtbase qtdeclarative qttranslations qttools \
             --outputdir ${{ runner.temp }}/Qt \
