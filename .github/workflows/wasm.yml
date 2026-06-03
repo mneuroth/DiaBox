@@ -35,11 +35,18 @@ jobs:
       - name: Emscripten Toolchain einrichten
         uses: mymindstorm/setup-emsdk@v16
         with:
-          version: '3.1.57'
+          version: '3.1.37'
           actions-on-failure: 'warn'
+
+      - name: Emscripten aktivieren
+        run: |
+          source $EMSDK/emsdk_env.sh
 
       - name: Build-Verzeichnis erstellen
         run: mkdir -p build
+
+      - name: Ninja installieren
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
 
       - name: CMake Konfiguration (WASM)
         run: |
