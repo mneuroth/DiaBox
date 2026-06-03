@@ -22,11 +22,11 @@ jobs:
       - name: aqtinstall installieren
         run: pip install aqtinstall==3.3.0
 
-      - name: Qt 6.7.3 WASM installieren
+      - name: Qt 6.6.3 WASM installieren
         env:
           QT_MIRROR: https://download.qt.io/online/qtsdkrepository/
         run: |
-          aqt install-qt linux desktop 6.7.3 wasm_singlethread \
+          aqt install-qt linux desktop 6.6.3 wasm_singlethread \
             -m qtbase qtdeclarative qttranslations qttools \
             --outputdir ${{ runner.temp }}/Qt \
 
@@ -41,7 +41,7 @@ jobs:
 
       - name: CMake Konfiguration (WASM)
         run: |
-          export QT_PATH=${{ runner.temp }}/Qt/6.7.3/wasm_singlethread
+          export QT_PATH=${{ runner.temp }}/Qt/6.6.3/wasm_singlethread
           export EMSDK_PATH=$(dirname $(which emcc))/..
           
           cmake -S . -B build \
