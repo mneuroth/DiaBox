@@ -75,7 +75,7 @@ jobs:
           echo "QT_PATH_WASM: $QT_PATH_WASM"
           ls -lrt $QT_PATH_HOST
           ls -lrt $QT_PATH_WASM
-          ls -lrz $QT_PATH/lib/cmake/Qt6
+          ls -lrt $QT_PATH/lib/cmake/Qt6
           echo "done."
 
           cmake -S . -B build \
