@@ -29,8 +29,8 @@ jobs:
           ninja --version
           echo "Basic tools installed and verified successfully."
 
-      #- name: Install ICU
-      #  run: sudo apt-get update && sudo apt-get install -y libicu-dev
+      - name: Install ICU
+        run: sudo apt-get update && sudo apt-get install -y libicu73
 
       - name: Install Qt host (gcc_64)
         uses: jurplel/install-qt-action@v4
