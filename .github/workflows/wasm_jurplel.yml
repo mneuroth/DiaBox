@@ -92,12 +92,13 @@ jobs:
           #python3 -m aqt install-qt linux wasm 6.8.3 wasm_singlethread \
           #  --modules qtdeclarative qtshadertools qtquickcontrols2 qtquicktimeline
 
-          cmake -S . -B build -v -DCMAKE_VERBOSE_MAKEFILE=ON \
+          cmake -S . -B build \
             -G Ninja \
             -DCMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
             -DCMAKE_PREFIX_PATH=$QT_PATH/lib/cmake \
             -DQt6_DIR=$QT_PATH/lib/cmake/Qt6 \
             -DQT_HOST_PATH=$QT_HOST_PATH \
+            -DCMAKE_VERBOSE_MAKEFILE=ON \
             -DCMAKE_BUILD_TYPE=Release
 
       - name: Build WASM binary
