@@ -111,8 +111,6 @@ jobs:
             -G Ninja \
             -DCMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
             -DCMAKE_PREFIX_PATH=$QT_PATH/lib/cmake:$QT_HOST_PATH/lib/cmake \
-            -DQt6_DIR=$QT_PATH/lib/cmake/Qt6 \
-            -DQT_HOST_PATH=$QT_HOST_PATH \
             -DCMAKE_VERBOSE_MAKEFILE=ON \
             -DQT_DEBUG_FIND_PACKAGE=ON \
             -DCMAKE_BUILD_TYPE=Release
