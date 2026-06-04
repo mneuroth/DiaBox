@@ -64,8 +64,8 @@ jobs:
         run: |
           export QT_INSTALL_DIR=${{ runner.temp }}/QtWASM
           source $EMSDK/emsdk_env.sh
-          export QT_PATH=${{ runner.temp }}/QtWASM/$QT_VERSION/wasm_singlethread
-          export QT_HOST_PATH=${{ runner.temp }}/Qt/$QT_VERSION/gcc_64
+          export QT_PATH=${{ runner.temp }}/QtWASM/Qt/$QT_VERSION/wasm_singlethread
+          export QT_HOST_PATH=${{ runner.temp }}/Qt/Qt/$QT_VERSION/gcc_64
           #export EMSDK_PATH=$(dirname $(which emcc))/..
 
           echo "QT_INSTALL_DIR=$QT_INSTALL_DIR"
@@ -75,9 +75,9 @@ jobs:
           echo "-------------"
           ls -lrt $QT_INSTALL_DIR
           echo "-------------"
-          ls -lrt $QT_HOST_PATH
-          echo "-------------"
           ls -lrt $QT_INSTALL_DIR/Qt
+          echo "-------------"
+          ls -lrt $QT_HOST_PATH
           echo "-------------"
           ls -lrt $QT_PATH
           echo "-------------"
