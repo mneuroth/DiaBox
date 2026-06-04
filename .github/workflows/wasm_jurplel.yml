@@ -29,8 +29,8 @@ jobs:
           ninja --version
           echo "Basic tools installed and verified successfully."
 
-      - name: Install ICU
-        run: sudo apt-get update && sudo apt-get install -y libicu73
+      #- name: Install ICU
+      #  run: sudo apt-get update && sudo apt-get install -y libicu-dev
 
       - name: Install Qt host (gcc_64)
         uses: jurplel/install-qt-action@v4
@@ -96,6 +96,8 @@ jobs:
           echo "-------------"
 
           aqt list-qt all_os wasm --modules 6.8.3 wasm_singlethread
+
+          export LD_LIBRARY_PATH=$QT_HOST_PATH/lib:$LD_LIBRARY_PATH
 
           #python3 -m aqt install-qt linux wasm 6.8.3 wasm_singlethread \
           #  --modules qtdeclarative qtshadertools qtquickcontrols2 qtquicktimeline
