@@ -45,6 +45,7 @@ jobs:
           host: 'all_os'
           target: 'wasm'
           arch: 'wasm_singlethread'
+          archives: 'qtbase qtdeclarative'
           dir: ${{ runner.temp }}/QtWASM
           install-deps: false
 
@@ -72,6 +73,8 @@ jobs:
           echo "QT_PATH=$QT_PATH"
           echo "QT_HOST_PATH=$QT_HOST_PATH"
 
+          echo "============="
+          ls -lrt
           echo "-------------"
           ls -lrt $QT_INSTALL_DIR
           echo "-------------"
@@ -83,11 +86,13 @@ jobs:
           echo "-------------"
           ls -lrt $QT_PATH/lib/cmake
           echo "-------------"
+          ls -lrt $QT_PATH/lib/cmake/Qt6
+          echo "-------------"
 
-          python3 -m aqt install-qt linux wasm 6.8.3 wasm_singlethread \
-            --modules qtdeclarative qtshadertools qtquickcontrols2 qtquicktimeline
+          #python3 -m aqt install-qt linux wasm 6.8.3 wasm_singlethread \
+          #  --modules qtdeclarative qtshadertools qtquickcontrols2 qtquicktimeline
 
-          cmake -S . -B build \
+          cmake --verbose -S . -B build \
             -G Ninja \
             -DCMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
             -DCMAKE_PREFIX_PATH=$QT_PATH/lib/cmake \
