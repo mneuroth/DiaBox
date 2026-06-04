@@ -102,8 +102,10 @@ jobs:
           echo "============="
           ls -lrt "$QT_HOST_PATH/lib/cmake" || true
           echo "============="
+          ls -lrt "$QT_PATH/lib/cmake/Qt6Quick" || true
+          echo "============="
 
-          cmake -S . -B build \
+          cmake -S . -B build --trace-expand \
             -G Ninja \
             -DCMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
             -DCMAKE_PREFIX_PATH=$QT_PATH/lib/cmake:$QT_HOST_PATH/lib/cmake \
