@@ -116,10 +116,12 @@ jobs:
           #  -DCMAKE_BUILD_TYPE=Release
 
           #$QT_PATH/lib/cmake/Qt6/qt.toolchain.cmake
+          #-DCMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
+          #-DCMAKE_TOOLCHAIN_FILE=$QT_PATH/lib/cmake/Qt6/qt.toolchain.cmake \
           cmake -S . -B build \
             -G Ninja \
             -DBUILD_WASM=ON \
-            -DCMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
+            -DCMAKE_TOOLCHAIN_FILE=$QT_PATH/lib/cmake/Qt6/qt.toolchain.cmake \
             -DCMAKE_PREFIX_PATH=$QT_PATH/lib/cmake:$QT_HOST_PATH/lib/cmake \
             -DQt6_DIR=$QT_PATH/lib/cmake/Qt6 \
             -DQt6Core_DIR=$QT_PATH/lib/cmake/Qt6Core \
@@ -132,6 +134,7 @@ jobs:
             -DQt6BundledHarfbuzz_DIR=$QT_PATH/lib/cmake/Qt6BundledHarfbuzz \
             -DQt6BundledFreetype_DIR=$QT_PATH/lib/cmake/Qt6BundledFreetype \
             -DQt6BundledLibjpeg_DIR=$QT_PATH/lib/cmake/Qt6BundledLibjpeg \
+            -DQt6Qml_DIR=$QT_PATH/lib/cmake/Qt6Qml \
             -DQT_HOST_PATH=$QT_HOST_PATH \
             -DCMAKE_VERBOSE_MAKEFILE=ON \
             -DQT_DEBUG_FIND_PACKAGE=ON \
