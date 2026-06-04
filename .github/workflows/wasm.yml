@@ -88,6 +88,7 @@ jobs:
             -DQt6BundledZLIB_DIR=$QT_PATH/lib/cmake/Qt6BundledZLIB \
             -DQt6BundledPcre2_DIR=$QT_PATH/lib/cmake/Qt6BundledPcre2 \
             -DQt6ZlibPrivate_DIR=$QT_PATH/lib/cmake/Qt6ZlibPrivate \
+            -DQt6Gui_DIR=$QT_PATH/lib/cmake/Qt6Gui \
             -DCMAKE_BUILD_TYPE=Release \
             -DQT_HOST_PATH=$QT_PATH_HOST \
             -G Ninja
