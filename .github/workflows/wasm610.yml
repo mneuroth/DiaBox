@@ -33,7 +33,7 @@ jobs:
           aqt list-qt linux desktop
           echo "def"
           aqt list-qt linux desktop --arch 6.9.3
-          echoe "def 1"
+          echo "def 1"
           aqt list-qt linux desktop --arch 6.6.3
           echo "def 2"
           aqt list-qt linux desktop --modules 6.9.3 linux_gcc_64
