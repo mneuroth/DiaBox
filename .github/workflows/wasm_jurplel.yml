@@ -45,6 +45,7 @@ jobs:
           host: 'all_os'
           target: 'wasm'
           arch: 'wasm_singlethread'
+          modules: 'qtbase qtdeclarative qtshadertools qtquickcontrols2'
           archives: 'qtbase qtdeclarative'
           dir: ${{ runner.temp }}/QtWASM
           install-deps: false
@@ -99,6 +100,7 @@ jobs:
             -DQt6_DIR=$QT_PATH/lib/cmake/Qt6 \
             -DQT_HOST_PATH=$QT_HOST_PATH \
             -DCMAKE_VERBOSE_MAKEFILE=ON \
+            -DQT_DEBUG_FIND_PACKAGE=ON \
             -DCMAKE_BUILD_TYPE=Release
 
       - name: Build WASM binary
