@@ -105,11 +105,14 @@ jobs:
           ls -lrt "$QT_PATH/lib/cmake/Qt6Quick" || true
           echo "============="
 
-          cmake -S . -B build --trace-expand \
+          # --trace-expand
+          # --log-level=VERBOSE
+          cmake -S . -B build \
             -G Ninja \
             -DCMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
             -DCMAKE_PREFIX_PATH=$QT_PATH/lib/cmake:$QT_HOST_PATH/lib/cmake \
             -DQt6_DIR=$QT_PATH/lib/cmake/Qt6 \
+            -DQt6Core_DIR=$QT_PATH/lib/cmake/Qt6Core \
             -DQt6Quick_DIR=$QT_PATH/lib/cmake/Qt6Quick \
             -DQT_HOST_PATH=$QT_HOST_PATH \
             -DCMAKE_VERBOSE_MAKEFILE=ON \
