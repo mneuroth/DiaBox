@@ -28,9 +28,10 @@ jobs:
 
       - name: Install Qt 6.9.3 host and WASM
         run: |
+          aqt list-qt linux desktop
           aqt list-qt linux desktop --arch 6.9.3
-          aqt install-qt linux desktop $QT_VERSION gcc_64 --outputdir $QT_INSTALL_DIR
-          aqt install-qt linux desktop $QT_VERSION wasm_singlethread --outputdir $QT_INSTALL_DIR
+          #aqt install-qt linux desktop $QT_VERSION gcc_64 --outputdir $QT_INSTALL_DIR
+          #aqt install-qt linux desktop $QT_VERSION wasm_singlethread --outputdir $QT_INSTALL_DIR
 
       - name: Set up Emscripten
         uses: mymindstorm/setup-emsdk@v16
