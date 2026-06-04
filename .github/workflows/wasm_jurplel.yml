@@ -107,6 +107,16 @@ jobs:
 
           # --trace-expand
           # --log-level=VERBOSE
+          qt-cmake -S . -B build \
+            -G Ninja \
+            -DCMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
+            -DCMAKE_PREFIX_PATH=$QT_PATH/lib/cmake:$QT_HOST_PATH/lib/cmake \
+            -DQt6_DIR=$QT_PATH/lib/cmake/Qt6 \
+            -DQT_HOST_PATH=$QT_HOST_PATH \
+            -DCMAKE_VERBOSE_MAKEFILE=ON \
+            -DQT_DEBUG_FIND_PACKAGE=ON \
+            -DCMAKE_BUILD_TYPE=Release
+
           cmake -S . -B build \
             -G Ninja \
             -DCMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
@@ -121,6 +131,7 @@ jobs:
             -DQt6BundledLibpng_DIR=$QT_PATH/lib/cmake/Qt6BundledLibpng \
             -DQt6BundledHarfbuzz_DIR=$QT_PATH/lib/cmake/Qt6BundledHarfbuzz \
             -DQt6BundledFreetype_DIR=$QT_PATH/lib/cmake/Qt6BundledFreetype \
+            -DQt6BundledLibjpeg_DIR=$QT_PATH/lib/cmake/Qt6BundledLibjpeg \
             -DQT_HOST_PATH=$QT_HOST_PATH \
             -DCMAKE_VERBOSE_MAKEFILE=ON \
             -DQT_DEBUG_FIND_PACKAGE=ON \
