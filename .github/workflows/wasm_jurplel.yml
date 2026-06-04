@@ -20,8 +20,14 @@ jobs:
 
       - name: Install basic tools
         run: |
+          echo "Updating package lists and installing cmake, ninja-build, and wget..."
           sudo apt-get update
+          echo "Installing cmake, ninja-build, and wget..."
           sudo apt-get install -y cmake ninja-build wget
+          echo "Verifying installations..."
+          cmake --version
+          ninja --version
+          echo "Basic tools installed and verified successfully."
 
       - name: Install Qt host (gcc_64)
         uses: jurplel/install-qt-action@v4
