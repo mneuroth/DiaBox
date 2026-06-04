@@ -119,6 +119,7 @@ jobs:
             -DQt6ZlibPrivate_DIR=$QT_PATH/lib/cmake/Qt6ZlibPrivate \
             -DQt6Gui_DIR=$QT_PATH/lib/cmake/Qt6Gui \
             -DQt6BundledLibpng_DIR=$QT_PATH/lib/cmake/Qt6BundledLibpng \
+            -DQt6BundledHarfbuzz_DIR=$QT_PATH/lib/cmake/Qt6BundledHarfbuzz \
             -DQT_HOST_PATH=$QT_HOST_PATH \
             -DCMAKE_VERBOSE_MAKEFILE=ON \
             -DQT_DEBUG_FIND_PACKAGE=ON \
