@@ -28,7 +28,7 @@ jobs:
 
       - name: Install Qt 6.9.3 host and WASM
         run: |
-          aqt list-qt linux desktop --modules 6.9.3 gcc_64
+          aqt list-qt linux desktop --arch 6.9.3
           aqt install-qt linux desktop $QT_VERSION gcc_64 --outputdir $QT_INSTALL_DIR
           aqt install-qt linux desktop $QT_VERSION wasm_singlethread --outputdir $QT_INSTALL_DIR
 
