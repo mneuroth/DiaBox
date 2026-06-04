@@ -30,8 +30,10 @@ jobs:
 
       - name: Configure CMake
         run: |
+          pwd
+          ls -lrt
           ls -lrt ${{ runner.temp }}/Qt
-          ls -lrt ${{ runner.temp }}/Qt/6.10.3
+          #ls -lrt ${{ runner.temp }}/Qt/6.10.3
           cmake -S . -B build -G Ninja \
             -DCMAKE_PREFIX_PATH=${{ runner.temp }}/Qt/6.10.3/gcc_64/lib/cmake \
             -DQt6_DIR=${{ runner.temp }}/Qt/6.10.3/gcc_64/lib/cmake/Qt6 \
