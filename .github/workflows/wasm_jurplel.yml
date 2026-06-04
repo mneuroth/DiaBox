@@ -114,6 +114,11 @@ jobs:
             -DQt6_DIR=$QT_PATH/lib/cmake/Qt6 \
             -DQt6Core_DIR=$QT_PATH/lib/cmake/Qt6Core \
             -DQt6Quick_DIR=$QT_PATH/lib/cmake/Qt6Quick \
+            -DQt6BundledZLIB_DIR=$QT_PATH/lib/cmake/Qt6BundledZLIB \
+            -DQt6BundledPcre2_DIR=$QT_PATH/lib/cmake/Qt6BundledPcre2 \
+            -DQt6ZlibPrivate_DIR=$QT_PATH/lib/cmake/Qt6ZlibPrivate \
+            -DQt6Gui_DIR=$QT_PATH/lib/cmake/Qt6Gui \
+            -DQt6BundledLibpng_DIR=$QT_PATH/lib/cmake/Qt6BundledLibpng \
             -DQT_HOST_PATH=$QT_HOST_PATH \
             -DCMAKE_VERBOSE_MAKEFILE=ON \
             -DQT_DEBUG_FIND_PACKAGE=ON \
