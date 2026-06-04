@@ -27,7 +27,7 @@ jobs:
         uses: jurplel/install-qt-action@v4
         with:
           version: '6.10.3'
-          target: 'all_os'
+          target: 'desktop'
           arch: 'linux_gcc_64'
           dir: ${{ runner.temp }}/Qt
           install-deps: true
