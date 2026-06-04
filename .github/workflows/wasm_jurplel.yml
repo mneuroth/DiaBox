@@ -62,11 +62,13 @@ jobs:
 
       - name: Configure CMake for WASM
         run: |
+          export QT_INSTALL_DIR=${{ runner.temp }}/QtWASM
           source $EMSDK/emsdk_env.sh
           export QT_PATH=${{ runner.temp }}/QtWASM/$QT_VERSION/wasm_singlethread
           export QT_HOST_PATH=${{ runner.temp }}/Qt/$QT_VERSION/gcc_64
           #export EMSDK_PATH=$(dirname $(which emcc))/..
 
+          echo "QT_INSTALL_DIR=$QT_INSTALL_DIR"
           echo "QT_PATH=$QT_PATH"
           echo "QT_HOST_PATH=$QT_HOST_PATH"
 
