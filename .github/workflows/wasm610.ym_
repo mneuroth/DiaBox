@@ -47,11 +47,6 @@ jobs:
           aqt install-qt linux desktop $QT_VERSION linux_gcc_64 --outputdir $QT_INSTALL_DIR
           #aqt install-qt linux desktop $QT_VERSION wasm_singlethread --outputdir $QT_INSTALL_DIR
 
-      - name: Set up Emscripten
-        uses: mymindstorm/setup-emsdk@v16
-        with:
-          version: '3.1.57'
-
       - name: Configure and build Linux desktop
         run: |
           export QT_HOST_PATH=$QT_INSTALL_DIR/$QT_VERSION/gcc_64
@@ -61,6 +56,11 @@ jobs:
             -DQt6_DIR=$QT_HOST_PATH/lib/cmake/Qt6 \
             -DCMAKE_BUILD_TYPE=Release
           cmake --build build-desktop --parallel
+
+      - name: Set up Emscripten
+        uses: mymindstorm/setup-emsdk@v16
+        with:
+          version: '3.1.57'
 
       - name: Activate Emscripten and verify tools
         run: |

@@ -1,0 +1,48 @@
+name: Linux Desktop Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build_linux_desktop:
+    name: Build Linux Desktop Binary
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Qt 6.10.3
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.10.3'
+          target: 'desktop'
+          arch: 'gcc_64'
+          dir: ${{ runner.temp }}/Qt
+          install-deps: true
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build
+
+      - name: Configure CMake
+        run: |
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_PREFIX_PATH=${{ runner.temp }}/Qt/6.10.3/gcc_64/lib/cmake \
+            -DQt6_DIR=${{ runner.temp }}/Qt/6.10.3/gcc_64/lib/cmake/Qt6 \
+            -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Install binary
+        run: cmake --install build --prefix build/install
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-desktop-binary
+          path: build/install
