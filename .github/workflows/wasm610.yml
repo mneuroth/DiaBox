@@ -2,9 +2,9 @@ name: Qt 6.10 WASM Build and Release
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build_wasm:
