@@ -31,9 +31,11 @@ jobs:
           aqt list-qt --help
           echo "abc"
           aqt list-qt linux desktop
-          echo "def"
+          echo "def 6.9.3"
           aqt list-qt linux desktop --arch 6.9.3
-          echo "def 1"
+          echo "def 6.8.3"
+          aqt list-qt linux desktop --arch 6.8.3
+          echo "def 1 6.6.3"
           aqt list-qt linux desktop --arch 6.6.3
           echo "def 2"
           aqt list-qt linux desktop --modules 6.9.3 linux_gcc_64
@@ -82,10 +84,20 @@ jobs:
       - name: Build WASM binary
         run: cmake --build build --parallel
 
+      - name: Configure and build Linux desktop
+        run: |
+          export QT_HOST_PATH=$QT_INSTALL_DIR/$QT_VERSION/gcc_64
+          cmake -S . -B build-desktop \
+            -G Ninja \
+            -DCMAKE_PREFIX_PATH=$QT_HOST_PATH/lib/cmake \
+            -DQt6_DIR=$QT_HOST_PATH/lib/cmake/Qt6 \
+            -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-desktop --parallel
+
       - name: Collect release artifacts
         run: |
           mkdir -p release_files
-          find build -maxdepth 1 -type f \( -name '*.wasm' -o -name '*.js' -o -name '*.html' -o -name '*.data' -o -name '*.wasm.map' \) -exec cp {} release_files/ \;
+          find build build-desktop -maxdepth 1 -type f \( -name '*.wasm' -o -name '*.js' -o -name '*.html' -o -name '*.data' -o -name '*.wasm.map' -o -name 'appDiaBox' \) -exec cp {} release_files/ \;
           ls -la release_files
 
       - name: Upload build artifacts
