@@ -45,7 +45,7 @@ jobs:
           host: 'all_os'
           target: 'wasm'
           arch: 'wasm_singlethread'
-          modules: 'qtbase qtdeclarative qtshadertools qtquickcontrols2'
+          #modules: 'qtbase qtdeclarative qtshadertools qtquickcontrols2'
           archives: 'qtbase qtdeclarative'
           dir: ${{ runner.temp }}/QtWASM
           install-deps: false
@@ -89,6 +89,8 @@ jobs:
           echo "-------------"
           ls -lrt $QT_PATH/lib/cmake/Qt6
           echo "-------------"
+
+          aqt list-qt all_os wasm --modules 6.8.3 wasm_singlethread
 
           #python3 -m aqt install-qt linux wasm 6.8.3 wasm_singlethread \
           #  --modules qtdeclarative qtshadertools qtquickcontrols2 qtquicktimeline
