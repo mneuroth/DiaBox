@@ -36,7 +36,7 @@ jobs:
         uses: jurplel/install-qt-action@v4
         with:
           version: '6.10.3'
-          target: 'desktop'
+          target: 'all_os'
           arch: 'wasm_singlethread'
           dir: ${{ runner.temp }}/QtWASM
           install-deps: false
