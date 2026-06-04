@@ -81,6 +81,11 @@ jobs:
           echo "-------------"
           ls -lrt $QT_PATH
           echo "-------------"
+          ls -lrt $QT_PATH/lib/cmake
+          echo "-------------"
+
+          python3 -m aqt install-qt linux wasm 6.8.3 wasm_singlethread \
+            --modules qtdeclarative qtshadertools qtquickcontrols2 qtquicktimeline
 
           cmake -S . -B build \
             -G Ninja \
