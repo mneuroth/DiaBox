@@ -9,9 +9,9 @@ on:
 jobs:
   build_wasm:
     name: Build Qt WebAssembly
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     env:
-      QT_VERSION: 6.10.3
+      QT_VERSION: 6.9.3
       QT_INSTALL_DIR: ./Qt
 
     steps:
@@ -26,9 +26,9 @@ jobs:
       - name: Install aqtinstall
         run: pip install -U aqtinstall
 
-      - name: Install Qt 6.10.3 host and WASM
+      - name: Install Qt 6.9.3 host and WASM
         run: |
-          aqt list-qt linux desktop --modules 6.10.3 gcc_64
+          aqt list-qt linux desktop --modules 6.9.3 gcc_64
           aqt install-qt linux desktop $QT_VERSION gcc_64 --outputdir $QT_INSTALL_DIR
           aqt install-qt linux desktop $QT_VERSION wasm_singlethread --outputdir $QT_INSTALL_DIR
 
