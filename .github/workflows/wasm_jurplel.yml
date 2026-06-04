@@ -108,6 +108,7 @@ jobs:
             -DCMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
             -DCMAKE_PREFIX_PATH=$QT_PATH/lib/cmake:$QT_HOST_PATH/lib/cmake \
             -DQt6_DIR=$QT_PATH/lib/cmake/Qt6 \
+            -DQt6Quick_DIR=$QT_PATH/lib/cmake/Qt6Quick \
             -DQT_HOST_PATH=$QT_HOST_PATH \
             -DCMAKE_VERBOSE_MAKEFILE=ON \
             -DQT_DEBUG_FIND_PACKAGE=ON \
