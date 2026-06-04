@@ -28,9 +28,12 @@ jobs:
 
       - name: Install Qt 6.9.3 host and WASM
         run: |
+          aqt list-qt --help
           echo "abc"
           aqt list-qt linux desktop
           echo "def"
+          aqt list-qt linux desktop --arch 6.9.3
+          echo "def 2"
           aqt list-qt linux desktop --modules 6.9.3 gcc_64
           echo "xyz"
           aqt list-qt linux desktop --modules 6.9.3 wasm_singlethread
