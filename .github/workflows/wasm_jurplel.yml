@@ -35,6 +35,8 @@ jobs:
           version: '6.8.3'
           target: 'desktop'
           arch: 'linux_gcc_64'
+          modules: 'qtimageformats qtshadertools'
+          archives: 'qtbase qtdeclarative qtquick qtquickcontrols2'
           dir: ${{ runner.temp }}/Qt
           install-deps: true
 
@@ -45,8 +47,8 @@ jobs:
           host: 'all_os'
           target: 'wasm'
           arch: 'wasm_singlethread'
-          modules: 'qtimageformats  qtshadertools'
-          archives: 'qtbase qtquick qtdeclarative'
+          modules: 'qtimageformats qtshadertools'
+          archives: 'qtbase qtdeclarative qtquick qtquickcontrols2'
           dir: ${{ runner.temp }}/QtWASM
           install-deps: false
 
