@@ -73,11 +73,13 @@ jobs:
           echo "QT_HOST_PATH=$QT_HOST_PATH"
 
           echo "-------------"
-          ls -lrt $QT_PATH
+          ls -lrt $QT_INSTALL_DIR
           echo "-------------"
           ls -lrt $QT_HOST_PATH
           echo "-------------"
-          ls -lrt $QT_INSTALL_DIR
+          ls -lrt $QT_INSTALL_DIR/Qt
+          echo "-------------"
+          ls -lrt $QT_PATH
           echo "-------------"
 
           cmake -S . -B build \
