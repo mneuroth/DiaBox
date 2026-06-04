@@ -11,7 +11,7 @@ jobs:
     name: Build Qt WebAssembly (wasm_singlethread)
     runs-on: ubuntu-24.04
     env:
-      QT_VERSION: 6.10.3
+      QT_VERSION: 6.7.3
       QT_INSTALL_DIR: ./Qt
 
     steps:
@@ -26,7 +26,7 @@ jobs:
       - name: Install Qt host (gcc_64)
         uses: jurplel/install-qt-action@v4
         with:
-          version: '6.10.3'
+          version: '6.7.3'
           target: 'desktop'
           arch: 'linux_gcc_64'
           dir: ${{ runner.temp }}/Qt
@@ -35,7 +35,7 @@ jobs:
       - name: Install Qt WASM (wasm_singlethread)
         uses: jurplel/install-qt-action@v4
         with:
-          version: '6.10.3'
+          version: '6.7.3'
           target: 'wasm'
           arch: 'wasm_singlethread'
           dir: ${{ runner.temp }}/QtWASM
