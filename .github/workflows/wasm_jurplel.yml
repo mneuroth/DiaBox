@@ -65,14 +65,14 @@ jobs:
           source $EMSDK/emsdk_env.sh
           export QT_PATH=${{ runner.temp }}/QtWASM/$QT_VERSION/wasm_singlethread
           export QT_HOST_PATH=${{ runner.temp }}/Qt/$QT_VERSION/gcc_64
-          export EMSDK_PATH=$(dirname $(which emcc))/..
+          #export EMSDK_PATH=$(dirname $(which emcc))/..
 
           echo "QT_PATH=$QT_PATH"
           echo "QT_HOST_PATH=$QT_HOST_PATH"
 
           cmake -S . -B build \
             -G Ninja \
-            -DCMAKE_TOOLCHAIN_FILE=$EMSDK_PATH/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
+            -DCMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
             -DCMAKE_PREFIX_PATH=$QT_PATH/lib/cmake \
             -DQt6_DIR=$QT_PATH/lib/cmake/Qt6 \
             -DQT_HOST_PATH=$QT_HOST_PATH \
