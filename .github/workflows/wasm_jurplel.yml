@@ -136,6 +136,7 @@ jobs:
             -DQt6BundledLibjpeg_DIR=$QT_PATH/lib/cmake/Qt6BundledLibjpeg \
             -DQt6Qml_DIR=$QT_PATH/lib/cmake/Qt6Qml \
             -DQt6QuickVectorImage_DIR=$QT_PATH/lib/cmake/Qt6QuickVectorImage \
+            -DQt6Svg_DIR=$QT_PATH/lib/cmake/Qt6Svg \
             -DQt6QmlMacros_DIR=$QT_PATH/lib/cmake/Qt6QmlMacros \
             -DQt6QuickVectorImageGeneratorPrivate_DIR=$QT_PATH/lib/cmake/Qt6QuickVectorImageGeneratorPrivate \
             -DQT_HOST_PATH=$QT_HOST_PATH \
