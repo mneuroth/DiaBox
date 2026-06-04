@@ -72,6 +72,14 @@ jobs:
           echo "QT_PATH=$QT_PATH"
           echo "QT_HOST_PATH=$QT_HOST_PATH"
 
+          echo "-------------"
+          ls -lrt $QT_PATH
+          echo "-------------"
+          ls -lrt $QT_HOST_PATH
+          echo "-------------"
+          ls -lrt $QT_INSTALL_DIR
+          echo "-------------"
+
           cmake -S . -B build \
             -G Ninja \
             -DCMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
