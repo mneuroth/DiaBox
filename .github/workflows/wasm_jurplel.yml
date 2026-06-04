@@ -45,7 +45,7 @@ jobs:
           host: 'all_os'
           target: 'wasm'
           arch: 'wasm_singlethread'
-          #modules: 'qtbase qtdeclarative qtshadertools qtquickcontrols2'
+          modules: 'qtimageformats  qtshadertools'
           archives: 'qtbase qtdeclarative'
           dir: ${{ runner.temp }}/QtWASM
           install-deps: false
