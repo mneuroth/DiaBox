@@ -36,7 +36,7 @@ jobs:
           target: 'desktop'
           arch: 'linux_gcc_64'
           modules: 'qtimageformats qtshadertools qtquicktimeline'
-          archives: 'qtbase qtdeclarative qtquick qtquickcontrols2 qtsvg'
+          archives: 'qtbase qtdeclarative qtquick qtquickcontrols2 qtsvg qttranslations qttools'
           dir: ${{ runner.temp }}/Qt
           install-deps: true
 
@@ -48,7 +48,7 @@ jobs:
           target: 'wasm'
           arch: 'wasm_singlethread'
           modules: 'qtimageformats qtshadertools qtquicktimeline'
-          archives: 'qtbase qtdeclarative qtquick qtquickcontrols2 qtsvg'
+          archives: 'qtbase qtdeclarative qtquick qtquickcontrols2 qtsvg qttranslations qttools'
           dir: ${{ runner.temp }}/QtWASM
           install-deps: false
 
