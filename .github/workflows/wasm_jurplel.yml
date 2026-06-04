@@ -28,7 +28,7 @@ jobs:
         with:
           version: '6.10.3'
           target: 'desktop'
-          arch: 'gcc_64'
+          arch: 'linux_gcc_64'
           dir: ${{ runner.temp }}/Qt
           install-deps: true
 
@@ -38,7 +38,7 @@ jobs:
           version: '6.10.3'
           target: 'desktop'
           arch: 'wasm_singlethread'
-          dir: ${{ runner.temp }}/Qt
+          dir: ${{ runner.temp }}/QtWASM
           install-deps: false
 
       - name: Set up Emscripten
@@ -56,7 +56,7 @@ jobs:
       - name: Configure CMake for WASM
         run: |
           source $EMSDK/emsdk_env.sh
-          export QT_PATH=${{ runner.temp }}/Qt/$QT_VERSION/wasm_singlethread
+          export QT_PATH=${{ runner.temp }}/QtWASM/$QT_VERSION/wasm_singlethread
           export QT_HOST_PATH=${{ runner.temp }}/Qt/$QT_VERSION/gcc_64
           export EMSDK_PATH=$(dirname $(which emcc))/..
 
