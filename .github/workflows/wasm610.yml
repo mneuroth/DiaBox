@@ -1,0 +1,93 @@
+name: Qt 6.10 WASM Build and Release
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build_wasm:
+    name: Build Qt WebAssembly
+    runs-on: ubuntu-22.04
+    env:
+      QT_VERSION: 6.10.3
+      QT_INSTALL_DIR: ${{ runner.temp }}/Qt
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install aqtinstall
+        run: pip install -U aqtinstall
+
+      - name: Install Qt 6.10.3 host and WASM
+        run: |
+          aqt install-qt linux desktop $QT_VERSION gcc_64 --outputdir $QT_INSTALL_DIR
+          aqt install-qt linux desktop $QT_VERSION wasm_singlethread \
+            -m qtbase qtdeclarative qttranslations qttools qtquickcontrols2 \
+            --outputdir $QT_INSTALL_DIR
+
+      - name: Set up Emscripten
+        uses: mymindstorm/setup-emsdk@v16
+        with:
+          version: '3.1.57'
+
+      - name: Activate Emscripten and verify tools
+        run: |
+          source $EMSDK/emsdk_env.sh
+          emcc --version
+          em++ --version
+          ninja --version || true
+
+      - name: Install Ninja
+        run: |
+          sudo apt-get update && sudo apt-get install -y ninja-build
+          ninja --version
+
+      - name: Configure CMake for WASM
+        run: |
+          source $EMSDK/emsdk_env.sh
+          export QT_PATH=$QT_INSTALL_DIR/$QT_VERSION/wasm_singlethread
+          export QT_HOST_PATH=$QT_INSTALL_DIR/$QT_VERSION/gcc_64
+          export EMSDK_PATH=$(dirname $(which emcc))/..
+
+          echo "QT_PATH=$QT_PATH"
+          echo "QT_HOST_PATH=$QT_HOST_PATH"
+          ls -la "$QT_PATH/lib/cmake" || true
+
+          cmake -S . -B build \
+            -G Ninja \
+            -DCMAKE_TOOLCHAIN_FILE=$EMSDK_PATH/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
+            -DCMAKE_PREFIX_PATH=$QT_PATH/lib/cmake \
+            -DQt6_DIR=$QT_PATH/lib/cmake/Qt6 \
+            -DQT_HOST_PATH=$QT_HOST_PATH \
+            -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build WASM binary
+        run: cmake --build build --parallel
+
+      - name: Collect release artifacts
+        run: |
+          mkdir -p release_files
+          find build -maxdepth 1 -type f \( -name '*.wasm' -o -name '*.js' -o -name '*.html' -o -name '*.data' -o -name '*.wasm.map' \) -exec cp {} release_files/ \;
+          ls -la release_files
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wasm-release
+          path: release_files
+
+      - name: Create GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release_files/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
