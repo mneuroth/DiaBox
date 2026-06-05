@@ -29,42 +29,17 @@ jobs:
           ninja --version
           echo "Basic tools installed and verified successfully."
 
-      #- name: Install ICU
-      #  run: sudo apt-get update && sudo apt-get install -y libicu-dev
-
-      #- name: Install ICU 73 for Qt 6.8.x
-      #  run: |
-      #    sudo apt-get update
-      #    sudo apt-get install -y libicu-dev
-      #    sudo ln -s /usr/lib/x86_64-linux-gnu/libicui18n.so.74 /usr/lib/x86_64-linux-gnu/libicui18n.so.73 || true
-      #    sudo ln -s /usr/lib/x86_64-linux-gnu/libicuuc.so.74 /usr/lib/x86_64-linux-gnu/libicuuc.so.73 || true
-      #    sudo ln -s /usr/lib/x86_64-linux-gnu/libicudata.so.74 /usr/lib/x86_64-linux-gnu/libicudata.so.73 || true
-
       - name: Install Qt host (gcc_64)
         uses: jurplel/install-qt-action@v4
         with:
           version: '6.8.3'
           target: 'desktop'
           arch: 'linux_gcc_64'
-          #modules: 'qtimageformats qtshadertools qtquicktimeline'
-          #archives: 'qtbase qtdeclarative qtquick qtquickcontrols2 qtsvg qttranslations qttools'
           dir: ${{ runner.temp }}/Qt
           install-deps: true
 
       - name: Configure CMake for Host
         run: |
-          pwd
-          echo "======="
-          ls -lrta
-          echo "======="
-          ls -lrta ${{ runner.temp }}/Qt
-          echo "======="
-          ls -lrta ${{ runner.temp }}/Qt/Qt
-          echo "======="
-          ls -lrta ${{ runner.temp }}
-          echo "======="
-          ls -lrt ${{ runner.temp }}/Qt/Qt/6.8.3
-          echo "======="
           cmake -S . -B build_host -G Ninja \
             -DCMAKE_PREFIX_PATH=${{ runner.temp }}/Qt/6.8.3/gcc_64/lib/cmake \
             -DQt6_DIR=${{ runner.temp }}/Qt/6.8.3/gcc_64/lib/cmake/Qt6 \
@@ -112,52 +87,13 @@ jobs:
           echo "QT_PATH=$QT_PATH"
           echo "QT_HOST_PATH=$QT_HOST_PATH"
 
-          echo "============="
-          ls -lrt
-          echo "-------------"
-          ls -lrt $QT_INSTALL_DIR
-          echo "-------------"
-          ls -lrt $QT_INSTALL_DIR/Qt
-          echo "-------------"
-          ls -lrt $QT_HOST_PATH
-          echo "-------------"
-          ls -lrt $QT_PATH
-          echo "-------------"
-          ls -lrt $QT_PATH/lib/cmake
-          echo "-------------"
-          ls -lrt $QT_PATH/lib/cmake/Qt6
-          echo "-------------"
+          #aqt list-qt all_os wasm --modules 6.8.3 wasm_singlethread
 
-          aqt list-qt all_os wasm --modules 6.8.3 wasm_singlethread
+          #export LD_LIBRARY_PATH=$QT_HOST_PATH/lib:$LD_LIBRARY_PATH
 
-          export LD_LIBRARY_PATH=$QT_HOST_PATH/lib:$LD_LIBRARY_PATH
-
-          #python3 -m aqt install-qt linux wasm 6.8.3 wasm_singlethread \
-          #  --modules qtdeclarative qtshadertools qtquickcontrols2 qtquicktimeline
-
-          echo "============="
-          ls -lrt "$QT_PATH/lib/cmake" || true
-          echo "============="
-          ls -lrt "$QT_HOST_PATH/lib/cmake" || true
-          echo "============="
-          ls -lrt "$QT_PATH/lib/cmake/Qt6Quick" || true
-          echo "============="
-
-          # --trace-expand
-          # --log-level=VERBOSE
-          #qt-cmake -S . -B build \
-          #  -G Ninja \
-          #  -DCMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
-          #  -DCMAKE_PREFIX_PATH=$QT_PATH/lib/cmake:$QT_HOST_PATH/lib/cmake:$QT_PATH/lib/cmake/Qt6 \
-          #  -DCMAKE_VERBOSE_MAKEFILE=ON \
-          #  -DQT_DEBUG_FIND_PACKAGE=ON \
-          #  -DCMAKE_BUILD_TYPE=Release
-
-          #$QT_PATH/lib/cmake/Qt6/qt.toolchain.cmake
           #-DCMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
           #-DCMAKE_TOOLCHAIN_FILE=$QT_PATH/lib/cmake/Qt6/qt.toolchain.cmake \
           #  -DCMAKE_PREFIX_PATH=$QT_PATH/lib/cmake:$QT_HOST_PATH/lib/cmake \
-          which cmake
           cmake -S . -B build \
             -G Ninja \
             -DBUILD_WASM=ON \
@@ -170,7 +106,6 @@ jobs:
 
       - name: Build WASM binary
         run: |
-          which cmake
           cmake --build build --parallel
           pwd
           ls -lrt build
@@ -197,3 +132,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 # run WASM build in output direcotry: python -m http.server 8080
+
+# Qt‑Version	Passende Emscripten‑Version	Quelle
+# Qt 6.2	2.0.14
+# Qt 6.3	3.0.0
+# Qt 6.4	3.1.14
+# Qt 6.5	3.1.25
+# Qt 6.6	3.1.37
+# Qt 6.7	3.1.50
+# Qt 6.8	3.1.56
+# Qt 6.9	3.1.70
+# Qt 6.10	4.0.7
+# Qt 6.11.1	4.0.7
