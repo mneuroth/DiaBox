@@ -163,22 +163,6 @@ jobs:
             -DBUILD_WASM=ON \
             -DCMAKE_TOOLCHAIN_FILE=$QT_PATH/lib/cmake/Qt6/qt.toolchain.cmake \
             -DCMAKE_PREFIX_PATH=$QT_PATH/lib/cmake \
-            -DQt6_DIR=$QT_PATH/lib/cmake/Qt6 \
-            -DQt6Core_DIR=$QT_PATH/lib/cmake/Qt6Core \
-            -DQt6Quick_DIR=$QT_PATH/lib/cmake/Qt6Quick \
-            -DQt6BundledZLIB_DIR=$QT_PATH/lib/cmake/Qt6BundledZLIB \
-            -DQt6BundledPcre2_DIR=$QT_PATH/lib/cmake/Qt6BundledPcre2 \
-            -DQt6ZlibPrivate_DIR=$QT_PATH/lib/cmake/Qt6ZlibPrivate \
-            -DQt6Gui_DIR=$QT_PATH/lib/cmake/Qt6Gui \
-            -DQt6BundledLibpng_DIR=$QT_PATH/lib/cmake/Qt6BundledLibpng \
-            -DQt6BundledHarfbuzz_DIR=$QT_PATH/lib/cmake/Qt6BundledHarfbuzz \
-            -DQt6BundledFreetype_DIR=$QT_PATH/lib/cmake/Qt6BundledFreetype \
-            -DQt6BundledLibjpeg_DIR=$QT_PATH/lib/cmake/Qt6BundledLibjpeg \
-            -DQt6Qml_DIR=$QT_PATH/lib/cmake/Qt6Qml \
-            -DQt6QuickVectorImage_DIR=$QT_PATH/lib/cmake/Qt6QuickVectorImage \
-            -DQt6Svg_DIR=$QT_PATH/lib/cmake/Qt6Svg \
-            -DQt6QmlMacros_DIR=$QT_PATH/lib/cmake/Qt6QmlMacros \
-            -DQt6QuickVectorImageGeneratorPrivate_DIR=$QT_PATH/lib/cmake/Qt6QuickVectorImageGeneratorPrivate \
             -DQT_HOST_PATH=$QT_HOST_PATH \
             -DCMAKE_VERBOSE_MAKEFILE=ON \
             -DQT_DEBUG_FIND_PACKAGE=ON \
@@ -211,3 +195,5 @@ jobs:
           files: release_files/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+# run WASM build in output direcotry: python -m http.server 8080
