@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       QT_VERSION: 6.8.3
+      EMSCRIPTEN_VERSION: 3.1.56
 
     steps:
       - name: Check out repository
@@ -65,7 +66,7 @@ jobs:
       - name: Set up Emscripten
         uses: mymindstorm/setup-emsdk@v16
         with:
-          version: '3.1.56'
+          version: ${{ env.EMSCRIPTEN_VERSION }}
 
       - name: Activate Emscripten and verify
         run: |
@@ -87,12 +88,9 @@ jobs:
 
           cmake -S . -B build \
             -G Ninja \
-            -DBUILD_WASM=ON \
             -DCMAKE_TOOLCHAIN_FILE=$QT_WASM_PATH/lib/cmake/Qt6/qt.toolchain.cmake \
             -DCMAKE_PREFIX_PATH=$QT_WASM_PATH/lib/cmake \
             -DQT_HOST_PATH=$QT_HOST_PATH \
-            -DCMAKE_VERBOSE_MAKEFILE=ON \
-            -DQT_DEBUG_FIND_PACKAGE=ON \
             -DCMAKE_BUILD_TYPE=Release
 
       - name: Build WASM binary
