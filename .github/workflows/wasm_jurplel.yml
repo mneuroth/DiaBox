@@ -65,15 +65,16 @@ jobs:
           echo "======="
           ls -lrt ${{ runner.temp }}/Qt/Qt/6.8.3
           echo "======="
-          cmake -S . -B build -G Ninja \
+          cmake -S . -B build_host -G Ninja \
             -DCMAKE_PREFIX_PATH=${{ runner.temp }}/Qt/6.8.3/gcc_64/lib/cmake \
             -DQt6_DIR=${{ runner.temp }}/Qt/6.8.3/gcc_64/lib/cmake/Qt6 \
             -DCMAKE_BUILD_TYPE=Release
 
       - name: Build for Host
         run: |
-          cmake --build build --parallel
-          ls -lrt build
+          cmake --build build_host --parallel
+          ls -lrt build_host
+          ls -lrt build_host/DiaBox
 
       - name: Install Qt WASM (wasm_singlethread)
         uses: jurplel/install-qt-action@v4
@@ -156,6 +157,7 @@ jobs:
           #-DCMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
           #-DCMAKE_TOOLCHAIN_FILE=$QT_PATH/lib/cmake/Qt6/qt.toolchain.cmake \
           #  -DCMAKE_PREFIX_PATH=$QT_PATH/lib/cmake:$QT_HOST_PATH/lib/cmake \
+          which cmake
           cmake -S . -B build \
             -G Ninja \
             -DBUILD_WASM=ON \
@@ -184,8 +186,11 @@ jobs:
 
       - name: Build WASM binary
         run: |
-          cmake --build build --parallel
+          which cmake
+          cmake --build build --parallel --log-level=VERBOSE
+          pwd
           ls -lrt build
+          ls -lrt build/DiaBox
 
       - name: Collect WASM artifacts
         run: |
