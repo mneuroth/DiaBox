@@ -71,7 +71,9 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release
 
       - name: Build for Host
-        run: cmake --build build --parallel
+        run: |
+          cmake --build build --parallel
+          ls -lrt build
 
       - name: Install Qt WASM (wasm_singlethread)
         uses: jurplel/install-qt-action@v4
@@ -181,7 +183,9 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release
 
       - name: Build WASM binary
-        run: cmake --build build --parallel
+        run: |
+          cmake --build build --parallel
+          ls -lrt build
 
       - name: Collect WASM artifacts
         run: |
