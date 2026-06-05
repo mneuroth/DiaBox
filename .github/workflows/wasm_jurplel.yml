@@ -12,7 +12,6 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       QT_VERSION: 6.8.3
-      QT_INSTALL_DIR: ./Qt
 
     steps:
       - name: Check out repository
@@ -78,22 +77,19 @@ jobs:
       - name: Configure CMake for WASM
         run: |
           source $EMSDK/emsdk_env.sh
-          export QT_PATH=${{ runner.temp }}/QtWASM/Qt/$QT_VERSION/wasm_singlethread
+          export QT_WASM_PATH=${{ runner.temp }}/QtWASM/Qt/$QT_VERSION/wasm_singlethread
           export QT_HOST_PATH=${{ runner.temp }}/Qt/Qt/$QT_VERSION/gcc_64
 
-          echo "QT_PATH=$QT_PATH"
+          echo "QT_WASM_PATH=$QT_WASM_PATH"
           echo "QT_HOST_PATH=$QT_HOST_PATH"
 
           #for debugging: aqt list-qt all_os wasm --modules $QT_VERSION wasm_singlethread
 
-          #-DCMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
-          #-DCMAKE_TOOLCHAIN_FILE=$QT_PATH/lib/cmake/Qt6/qt.toolchain.cmake \
-          #  -DCMAKE_PREFIX_PATH=$QT_PATH/lib/cmake:$QT_HOST_PATH/lib/cmake \
           cmake -S . -B build \
             -G Ninja \
             -DBUILD_WASM=ON \
-            -DCMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
-            -DCMAKE_PREFIX_PATH=$QT_PATH/lib/cmake \
+            -DCMAKE_TOOLCHAIN_FILE=$QT_WASM_PATH/lib/cmake/Qt6/qt.toolchain.cmake \
+            -DCMAKE_PREFIX_PATH=$QT_WASM_PATH/lib/cmake \
             -DQT_HOST_PATH=$QT_HOST_PATH \
             -DCMAKE_VERBOSE_MAKEFILE=ON \
             -DQT_DEBUG_FIND_PACKAGE=ON \
