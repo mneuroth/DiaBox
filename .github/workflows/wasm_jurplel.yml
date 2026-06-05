@@ -32,7 +32,7 @@ jobs:
       - name: Install Qt host (gcc_64)
         uses: jurplel/install-qt-action@v4
         with:
-          version: '6.8.3'
+          version: ${{ env.QT_VERSION }}
           target: 'desktop'
           arch: 'linux_gcc_64'
           dir: ${{ runner.temp }}/Qt
@@ -41,8 +41,8 @@ jobs:
       - name: Configure CMake for Host
         run: |
           cmake -S . -B build_host -G Ninja \
-            -DCMAKE_PREFIX_PATH=${{ runner.temp }}/Qt/6.8.3/gcc_64/lib/cmake \
-            -DQt6_DIR=${{ runner.temp }}/Qt/6.8.3/gcc_64/lib/cmake/Qt6 \
+            -DCMAKE_PREFIX_PATH=${{ runner.temp }}/Qt/$QT_VERSION/gcc_64/lib/cmake \
+            -DQt6_DIR=${{ runner.temp }}/Qt/$QT_VERSION/gcc_64/lib/cmake/Qt6 \
             -DCMAKE_BUILD_TYPE=Release
 
       - name: Build for Host
@@ -54,7 +54,7 @@ jobs:
       - name: Install Qt WASM (wasm_singlethread)
         uses: jurplel/install-qt-action@v4
         with:
-          version: '6.8.3'
+          version: ${{ env.QT_VERSION }}
           host: 'all_os'
           target: 'wasm'
           arch: 'wasm_singlethread'
@@ -81,7 +81,6 @@ jobs:
           source $EMSDK/emsdk_env.sh
           export QT_PATH=${{ runner.temp }}/QtWASM/Qt/$QT_VERSION/wasm_singlethread
           export QT_HOST_PATH=${{ runner.temp }}/Qt/Qt/$QT_VERSION/gcc_64
-          #export EMSDK_PATH=$(dirname $(which emcc))/..
 
           echo "QT_INSTALL_DIR=$QT_INSTALL_DIR"
           echo "QT_PATH=$QT_PATH"
@@ -89,7 +88,6 @@ jobs:
 
           #aqt list-qt all_os wasm --modules 6.8.3 wasm_singlethread
 
-          #export LD_LIBRARY_PATH=$QT_HOST_PATH/lib:$LD_LIBRARY_PATH
 
           #-DCMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
           #-DCMAKE_TOOLCHAIN_FILE=$QT_PATH/lib/cmake/Qt6/qt.toolchain.cmake \
