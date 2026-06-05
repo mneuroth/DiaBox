@@ -91,7 +91,7 @@ jobs:
       - name: Set up Emscripten
         uses: mymindstorm/setup-emsdk@v16
         with:
-          version: '3.1.57'
+          version: '3.1.56'
 
       - name: Activate Emscripten and verify
         run: |
