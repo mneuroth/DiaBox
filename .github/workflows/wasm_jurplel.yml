@@ -11,8 +11,12 @@ jobs:
     name: Build Qt WebAssembly (wasm_singlethread)
     runs-on: ubuntu-24.04
     env:
-      QT_VERSION: 6.9.3
-      EMSCRIPTEN_VERSION: 3.1.70
+      #QT_VERSION: 6.8.3
+      #EMSCRIPTEN_VERSION: 3.1.56
+      #QT_VERSION: 6.9.3
+      #EMSCRIPTEN_VERSION: 3.1.70
+      QT_VERSION: 6.10.3
+      EMSCRIPTEN_VERSION: 4.0.7
 
     steps:
       - name: Check out repository
