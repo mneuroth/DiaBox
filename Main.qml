@@ -8,6 +8,13 @@ Window {
 
     Text {
         id: name
-        text: qsTr("Some content !")
+        text: qsTr("Some content !\tQt Version: ")+qtVersion
+    }
+
+    Component.onCompleted: {
+        Qt.callLater(() => {
+                   console.log("Qt Version:", qtVersion)
+                   # Qt, Qt.version => undefined ?
+               })
     }
 }
