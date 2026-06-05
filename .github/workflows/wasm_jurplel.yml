@@ -187,7 +187,7 @@ jobs:
       - name: Build WASM binary
         run: |
           which cmake
-          cmake --build build --parallel --log-level=VERBOSE
+          cmake --build build --parallel
           pwd
           ls -lrt build
           ls -lrt build/DiaBox
