@@ -15,7 +15,9 @@ jobs:
       #EMSCRIPTEN_VERSION: 3.1.56
       #QT_VERSION: 6.9.3
       #EMSCRIPTEN_VERSION: 3.1.70
-      QT_VERSION: 6.10.3
+      #QT_VERSION: 6.10.3
+      #EMSCRIPTEN_VERSION: 4.0.7
+      QT_VERSION: 6.11.1
       EMSCRIPTEN_VERSION: 4.0.7
 
     steps:
