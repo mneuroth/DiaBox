@@ -49,7 +49,6 @@ jobs:
         run: |
           cmake --build build_host --parallel
           ls -lrt build_host
-          ls -lrt build_host/DiaBox
 
       - name: Install Qt WASM (wasm_singlethread)
         uses: jurplel/install-qt-action@v4
@@ -86,6 +85,8 @@ jobs:
 
           #for debugging: aqt list-qt all_os wasm --modules $QT_VERSION wasm_singlethread
 
+          #for debugging:   -DCMAKE_VERBOSE_MAKEFILE=ON
+          #for debugging:   -DQT_DEBUG_FIND_PACKAGE=ON
           cmake -S . -B build \
             -G Ninja \
             -DCMAKE_TOOLCHAIN_FILE=$QT_WASM_PATH/lib/cmake/Qt6/qt.toolchain.cmake \
@@ -98,7 +99,6 @@ jobs:
           cmake --build build --parallel
           pwd
           ls -lrt build
-          ls -lrt build/DiaBox
 
       - name: Collect WASM artifacts
         run: |
