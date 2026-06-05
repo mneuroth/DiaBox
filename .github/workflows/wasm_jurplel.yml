@@ -32,13 +32,13 @@ jobs:
       #- name: Install ICU
       #  run: sudo apt-get update && sudo apt-get install -y libicu-dev
 
-      - name: Install ICU 73 for Qt 6.8.x
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libicu-dev
-          sudo ln -s /usr/lib/x86_64-linux-gnu/libicui18n.so.74 /usr/lib/x86_64-linux-gnu/libicui18n.so.73 || true
-          sudo ln -s /usr/lib/x86_64-linux-gnu/libicuuc.so.74 /usr/lib/x86_64-linux-gnu/libicuuc.so.73 || true
-          sudo ln -s /usr/lib/x86_64-linux-gnu/libicudata.so.74 /usr/lib/x86_64-linux-gnu/libicudata.so.73 || true
+      #- name: Install ICU 73 for Qt 6.8.x
+      #  run: |
+      #    sudo apt-get update
+      #    sudo apt-get install -y libicu-dev
+      #    sudo ln -s /usr/lib/x86_64-linux-gnu/libicui18n.so.74 /usr/lib/x86_64-linux-gnu/libicui18n.so.73 || true
+      #    sudo ln -s /usr/lib/x86_64-linux-gnu/libicuuc.so.74 /usr/lib/x86_64-linux-gnu/libicuuc.so.73 || true
+      #    sudo ln -s /usr/lib/x86_64-linux-gnu/libicudata.so.74 /usr/lib/x86_64-linux-gnu/libicudata.so.73 || true
 
       - name: Install Qt host (gcc_64)
         uses: jurplel/install-qt-action@v4
