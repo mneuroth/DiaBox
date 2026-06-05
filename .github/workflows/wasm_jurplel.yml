@@ -46,8 +46,8 @@ jobs:
           version: '6.8.3'
           target: 'desktop'
           arch: 'linux_gcc_64'
-          modules: 'qtimageformats qtshadertools qtquicktimeline'
-          archives: 'qtbase qtdeclarative qtquick qtquickcontrols2 qtsvg qttranslations qttools'
+          #modules: 'qtimageformats qtshadertools qtquicktimeline'
+          #archives: 'qtbase qtdeclarative qtquick qtquickcontrols2 qtsvg qttranslations qttools'
           dir: ${{ runner.temp }}/Qt
           install-deps: true
 
