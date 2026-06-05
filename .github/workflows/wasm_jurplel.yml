@@ -51,6 +51,28 @@ jobs:
           dir: ${{ runner.temp }}/Qt
           install-deps: true
 
+      - name: Configure CMake for Host
+        run: |
+          pwd
+          echo "======="
+          ls -lrta
+          echo "======="
+          ls -lrta ${{ runner.temp }}/Qt
+          echo "======="
+          ls -lrta ${{ runner.temp }}/Qt/Qt
+          echo "======="
+          ls -lrta ${{ runner.temp }}
+          echo "======="
+          ls -lrt ${{ runner.temp }}/Qt/Qt/6.8.3
+          echo "======="
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_PREFIX_PATH=${{ runner.temp }}/Qt/6.8.3/gcc_64/lib/cmake \
+            -DQt6_DIR=${{ runner.temp }}/Qt/6.8.3/gcc_64/lib/cmake/Qt6 \
+            -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build for Host
+        run: cmake --build build --parallel
+
       - name: Install Qt WASM (wasm_singlethread)
         uses: jurplel/install-qt-action@v4
         with:
