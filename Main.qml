@@ -14,7 +14,7 @@ Window {
     Component.onCompleted: {
         Qt.callLater(() => {
                    console.log("Qt Version:", qtVersion)
-                   # Qt, Qt.version => undefined ?
+                   // Qt, Qt.version => undefined ?
                })
     }
 }
