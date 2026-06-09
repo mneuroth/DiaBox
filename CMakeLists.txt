@@ -17,6 +17,8 @@ qt_add_qml_module(dia_box
     URI DiaBox
     QML_FILES
         Main.qml
+        #RESOURCES dia_box_resources.qrc
+        images/yosemite.jpg
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
