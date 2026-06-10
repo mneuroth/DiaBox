@@ -42,11 +42,11 @@ jobs:
           dir build/x64/Release
           dir build/Release
 
-      #- name: Install binary
-      #  run: cmake --install build --prefix build/install
+      - name: Install binary
+        run: cmake --install build --prefix build/install
 
-      #- name: Upload build artifact
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #    name: windows-desktop-binary
-      #    path: build/install
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-desktop-binary
+          path: build/install
