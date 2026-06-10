@@ -15,10 +15,10 @@ jobs:
       #EMSCRIPTEN_VERSION: 3.1.56
       #QT_VERSION: 6.9.3
       #EMSCRIPTEN_VERSION: 3.1.70
-      #QT_VERSION: 6.10.3
-      #EMSCRIPTEN_VERSION: 4.0.7
-      QT_VERSION: 6.11.1
+      QT_VERSION: 6.10.3
       EMSCRIPTEN_VERSION: 4.0.7
+      #QT_VERSION: 6.11.1
+      #EMSCRIPTEN_VERSION: 4.0.7
 
     steps:
       - name: Check out repository
@@ -128,7 +128,7 @@ jobs:
 
 # run WASM build in output direcotry: python -m http.server 8080
 
-# Qt‑Version	Passende Emscripten‑Version	Quelle
+# Qt Version	Passende Emscripten Version
 # Qt 6.2	2.0.14
 # Qt 6.3	3.0.0
 # Qt 6.4	3.1.14
