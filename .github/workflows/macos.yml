@@ -37,6 +37,7 @@ jobs:
           ls -lrt
           cmake --build build --parallel
           ls -lrt
+          ls -lrt build
 
       - name: Install binary
         run: cmake --install build --prefix build/install

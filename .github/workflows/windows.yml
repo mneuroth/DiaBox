@@ -17,7 +17,7 @@ jobs:
       - name: Install Qt 6.10.3
         uses: jurplel/install-qt-action@v4
         with:
-          version: '6.7.3'
+          version: '6.8.3'
           target: 'desktop'
           arch: 'win64_msvc2019_64'
           dir: ${{ runner.temp }}/Qt
@@ -37,6 +37,7 @@ jobs:
           dir
           cmake --build build --parallel
           dir
+          dir build
 
       - name: Install binary
         run: cmake --install build --prefix build/install
