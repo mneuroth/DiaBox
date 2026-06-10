@@ -38,6 +38,7 @@ jobs:
           cmake --build build --parallel
           ls -lrt
           ls -lrt build
+          ls -lrt build/DiaBox
 
       - name: Install binary
         run: cmake --install build --prefix build/install

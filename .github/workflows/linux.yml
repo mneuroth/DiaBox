@@ -30,22 +30,10 @@ jobs:
 
       - name: Configure CMake
         run: |
-          pwd
-          echo "======="
-          ls -lrta
-          echo "======="
-          ls -lrta ${{ runner.temp }}/Qt
-          echo "======="
-          ls -lrta ${{ runner.temp }}/Qt/Qt
-          echo "======="
-          ls -lrta ${{ runner.temp }}
-          echo "======="
-          ls -lrt ${{ runner.temp }}/Qt/Qt/6.10.3
-          echo "======="
-          cmake -S . -B build -G Ninja \
-            -DCMAKE_PREFIX_PATH=${{ runner.temp }}/Qt/6.10.3/gcc_64/lib/cmake \
-            -DQt6_DIR=${{ runner.temp }}/Qt/6.10.3/gcc_64/lib/cmake/Qt6 \
-            -DCMAKE_BUILD_TYPE=Release
+          cmake -S . -B build -G Ninja
+          #  -DCMAKE_PREFIX_PATH=${{ runner.temp }}/Qt/6.10.3/gcc_64/lib/cmake \
+          #  -DQt6_DIR=${{ runner.temp }}/Qt/6.10.3/gcc_64/lib/cmake/Qt6 \
+          #  -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
         run: |
@@ -53,6 +41,7 @@ jobs:
           cmake --build build --parallel
           ls -lrt
           ls -lrt build
+          ls -lrt build/DiaBox
 
       - name: Install binary
         run: cmake --install build --prefix build/install
