@@ -13,13 +13,14 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-
+      #- name: Install mscv
+      #  uses: ilammy/msvc-dev-cmd@v1
       - name: Install Qt 6.9.3
         uses: jurplel/install-qt-action@v4
         with:
           version: '6.9.3'
           target: 'desktop'
-          arch: 'win64_msvc2019_64'
+          arch: 'win64_msvc2022_64'
           dir: ${{ runner.temp }}/Qt
           install-deps: true
 
