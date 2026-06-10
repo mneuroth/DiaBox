@@ -35,7 +35,7 @@ jobs:
       - name: Build
         run: |
           dir
-          cmake --build build --parallel
+          cmake --build build --parallel --config Release
           dir
           dir build
           dir build/x64

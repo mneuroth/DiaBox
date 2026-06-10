@@ -35,7 +35,7 @@ jobs:
       - name: Build
         run: |
           ls -lrt
-          cmake --build build --parallel
+          cmake --build build --parallel --config Release
           ls -lrt
           ls -lrt build
           ls -lrt build/DiaBox
