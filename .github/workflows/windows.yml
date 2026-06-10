@@ -38,12 +38,14 @@ jobs:
           cmake --build build --parallel
           dir
           dir build
+          dir build/x64
+          dir build/Debug
 
-      - name: Install binary
-        run: cmake --install build --prefix build/install
+      #- name: Install binary
+      #  run: cmake --install build --prefix build/install
 
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-desktop-binary
-          path: build/install
+      #- name: Upload build artifact
+      #  uses: actions/upload-artifact@v4
+      #  with:
+      #    name: windows-desktop-binary
+      #    path: build/install
