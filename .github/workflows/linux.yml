@@ -30,7 +30,7 @@ jobs:
 
       - name: Configure CMake
         run: |
-          cmake -S . -B build -G Ninja
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
           #  -DCMAKE_PREFIX_PATH=${{ runner.temp }}/Qt/6.10.3/gcc_64/lib/cmake \
           #  -DQt6_DIR=${{ runner.temp }}/Qt/6.10.3/gcc_64/lib/cmake/Qt6 \
           #  -DCMAKE_BUILD_TYPE=Release
