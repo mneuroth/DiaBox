@@ -61,3 +61,11 @@ jobs:
         with:
           name: windows-desktop-installer
           path: dist/dia_box_installer.exe
+
+      - name: Create GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/dia_box_installer.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

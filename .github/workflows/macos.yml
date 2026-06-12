@@ -34,10 +34,12 @@ jobs:
           cmake --build build --parallel --config Release
           ls -lrt
           ls -lrt build
-          ls -lrt build/DiaBox
+          ls -lrt build/dia_box.app
 
       - name: Install binary
-        run: cmake --install build --prefix build/install
+        run: |
+          cmake --install build --prefix build/install
+          ls -lrt build/install
 
       - name: Deploy Qt dependencies with macdeployqt
         run: |
@@ -49,4 +51,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: macos-desktop-binary
-          path: build/install/bin
+          path: build/install/bin/dia_box.app
+
+      - name: Create GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/install/bin/dia_box.app
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
