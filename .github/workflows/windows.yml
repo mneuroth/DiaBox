@@ -49,9 +49,7 @@ jobs:
       - name: Deploy Qt dependencies with windeployqt
         run: |
           dir
-          set QT_PATH = "${{ runner.temp }}/Qt/6.10.3/msvc2022_64"
-          set INSTALL_DIR = "build/install/bin"
-          windeployqt.exe --release --qmldir . "$INSTALL_DIR/dia_box.exe"
+          windeployqt.exe --release --qmldir . build/install/bin/dia_box.exe
           dir build/install/bin
 
       - name: Upload build artifact
