@@ -44,19 +44,19 @@ jobs:
       - name: Deploy Qt dependencies with macdeployqt
         run: |
           ls -lrt
-          macdeployqt build/install/bin/dia_box.app -dmg --release --qmldir .
-          ls -lrt build/install/bin
+          macdeployqt build/install/dia_box.app -dmg --release --qmldir .
+          ls -lrt build/install
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: macos-desktop-binary
-          path: build/install/bin/dia_box.app
+          path: build/install/dia_box.app
 
       - name: Create GitHub release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: build/install/bin/dia_box.app
+          files: build/install/dia_box.app
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
