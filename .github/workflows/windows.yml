@@ -46,6 +46,12 @@ jobs:
       - name: Install binary
         run: cmake --install build --prefix build/install
 
+      - name: Deploy Qt dependencies with windeployqt
+        run: |
+          $QT_PATH = "${{ runner.temp }}/Qt/6.10.3/msvc2022_64"
+          $INSTALL_DIR = "build/install/bin" & "$QT_PATH/bin/windeployqt.exe" --dir "$INSTALL_DIR" --release "$INSTALL_DIR/dia_box.exe"
+          dir build/install/bin
+
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
