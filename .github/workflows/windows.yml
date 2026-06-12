@@ -53,6 +53,7 @@ jobs:
           windeployqt.exe --release --qmldir . build/install/bin/dia_box.exe
           binarycreator.exe -c .\dist\config\config.xml -p .\dist\packages dist\QtQuickMemoInstaller.exe
           dir build/install/bin
+          dir dist
           dir dist/packages
           dir dist/packages/de.mneuroth.diabox
 
@@ -66,4 +67,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-desktop-binary
-          path: dist/packages/de.mneuroth.diabox
+          path: dist
