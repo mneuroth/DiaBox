@@ -42,7 +42,7 @@ jobs:
       - name: Deploy Qt dependencies with macdeployqt
         run: |
           ls -lrt
-          macdeployqt -dmg --release --qmldir . build/install/bin/dia_box.app
+          macdeployqt build/install/bin/dia_box.app -dmg --release --qmldir .
           ls -lrt build/install/bin
 
       - name: Upload build artifact
