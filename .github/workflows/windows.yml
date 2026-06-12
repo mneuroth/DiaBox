@@ -54,9 +54,16 @@ jobs:
           binarycreator.exe -c .\dist\config\config.xml -p .\dist\packages dist\QtQuickMemoInstaller.exe
           dir build/install/bin
           dir dist/packages
+          dir dist/packages/de.mneuroth.diabox
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: windows-desktop-binary
           path: build/install
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-desktop-binary
+          path: dist/packages/de.mneuroth.diabox
