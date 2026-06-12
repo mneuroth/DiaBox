@@ -23,6 +23,7 @@ jobs:
           arch: 'win64_msvc2022_64'
           dir: ${{ runner.temp }}/Qt
           install-deps: true
+          tools: 'tools_ifw'
 
       #- name: Install build tools
       #  run: |
