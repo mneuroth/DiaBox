@@ -49,8 +49,10 @@ jobs:
       - name: Deploy Qt dependencies with windeployqt
         run: |
           dir
+          where windeployqt.exe
           windeployqt.exe --release --qmldir . build/install/bin/dia_box.exe
-          binarycreator -c .\dist\config\config.xml -p .\dist\packages dist\QtQuickMemoInstaller.exe
+          where binarycreator.exe
+          binarycreator.exe -c .\dist\config\config.xml -p .\dist\packages dist\QtQuickMemoInstaller.exe
           dir build/install/bin
 
       - name: Upload build artifact
