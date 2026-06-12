@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>DiaBox</DisplayName>
+    <Description>Install DoaBpx application.</Description>
+    <Version>0.1.0-1</Version>
+    <ReleaseDate>2026-06-12</ReleaseDate>
+    <Licenses>
+        <License name="GPL3" file="license.txt" />
+    </Licenses>
+    <Default>script</Default>
+    <Script>installscript.qs</Script>
+    <!--
+    <UserInterfaces>
+        <UserInterface>page.ui</UserInterface>
+    </UserInterfaces>
+    -->
+</Package>

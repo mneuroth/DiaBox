@@ -50,6 +50,7 @@ jobs:
         run: |
           dir
           windeployqt.exe --release --qmldir . build/install/bin/dia_box.exe
+          binarycreator -c .\dist\config\config.xml -p .\dist\packages dist\QtQuickMemoInstaller.exe
           dir build/install/bin
 
       - name: Upload build artifact
