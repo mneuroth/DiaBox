@@ -126,7 +126,7 @@ jobs:
         with:
           files: release_files/*
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TKN }}
 
 # run WASM build in output direcotry: python -m http.server 8080
 
