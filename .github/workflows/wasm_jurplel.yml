@@ -113,7 +113,7 @@ jobs:
       - name: Collect WASM artifacts
         run: |
           mkdir -p release_files
-          find build -maxdepth 1 -type f \( -name '*.wasm' -o -name '*.js' -o -name '*.html' -name '*.svg' -o -name '*.data' -o -name '*.wasm.map' \) -exec cp {} release_files/ \;
+          find build -maxdepth 1 -type f \( -name '*.wasm' -o -name '*.js' -o -name '*.html' -o -name '*.svg' -o -name '*.data' -o -name '*.wasm.map' \) -exec cp {} release_files/ \;
           ls -la release_files
 
       - name: Create ZIP archive
