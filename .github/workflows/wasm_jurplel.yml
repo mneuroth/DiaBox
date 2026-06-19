@@ -113,14 +113,16 @@ jobs:
       - name: Collect WASM artifacts
         run: |
           mkdir -p release_files
-          find build -maxdepth 1 -type f \( -name '*.wasm' -o -name '*.js' -o -name '*.html' -o -name '*.data' -o -name '*.wasm.map' \) -exec cp {} release_files/ \;
+          find build -maxdepth 1 -type f \( -name '*.wasm' -o -name '*.js' -o -name '*.html' -name '*.svg' -o -name '*.data' -o -name '*.wasm.map' \) -exec cp {} release_files/ \;
           ls -la release_files
 
       - name: Create ZIP archive
         run: |
           cd release_files
-          zip -r dia_box_wasm.zip dia_box.html dia_box.js dia_box.wasm qtloader.js
+          zip -r dia_box_wasm.zip dia_box.html dia_box.js dia_box.wasm qtloader.js qtlogo.svg
           cd ..
+          ls -la release_files/*.zip
+          rm -f release_files/dia_box.html release_files/dia_box.js release_files/dia_box.wasm release_files/qtloader.js release_files/qtlogo.svg
           ls -la release_files/*.zip
 
       - name: Upload build artifact
