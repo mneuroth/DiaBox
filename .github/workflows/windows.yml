@@ -44,11 +44,18 @@ jobs:
           dir build/Release
 
       - name: Install binary
-        run: cmake --install build --prefix build/install
+        run: |
+          dir
+          cmake --install build --prefix build/install
+          dir
+          dir build
+          dir build/install
 
       - name: Deploy Qt dependencies with windeployqt
         run: |
           dir
+          dir build
+          dir build/install
           windeployqt.exe --release --qmldir . build/install/bin/dia_box.exe
           binarycreator.exe -c .\dist\config\config.xml -p .\dist\packages dist\dia_box_installer.exe
           dir build/install/bin
