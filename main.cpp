@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("qtVersion", QString(qVersion()));
 
     // Load the root QML component from the registered QML module
-    engine.loadFromModule("dia_box", "Main");
+    engine.loadFromModule("DiaBox", "Main");
 
     QObject::connect(
         &engine,
