@@ -1,32 +1,403 @@
 import QtQuick
+import QtQuick.Controls
+import QtQuick.Controls.Universal
+import QtQuick.Layouts
+import QtQuick.Dialogs
+import Qt.labs.settings
+import DiaBox
 
-Window {
-    id: main
-    width: 640
-    height: 480
+ApplicationWindow {
+    id: window
+    width:       1200
+    height:      800
+    minimumWidth:  640
+    minimumHeight: 420
     visible: true
-    title: qsTr("Hello World")
+    title:   "DiaBox"
 
-    Column {
-        Text {
-            id: name
-            text: qsTr("Infos:\nQt Version: ")+qtVersion
-            height: 40
-            width: 100
-        }
+    Universal.theme:  Universal.Dark
+    Universal.accent: "#5566cc"
 
-        Image {
-            id: aImage
-            source: "images/yosemite.jpg"
-            fillMode: Image.PreserveAspectFit
-            width: main.width
+    // ── Persistent settings (written to %APPDATA%\PredictiveServices\ImageViewer.ini) ──
+    Settings {
+        id: appSettings
+        property string imageFolder: "C:/images"
+    }
+
+    // ── Backend: C++ directory watcher / model ───────────────────────────────
+    DirectoryModel {
+        id: dirModel
+        folder: appSettings.imageFolder
+
+        // When the list of files changes (dir change, files added/deleted),
+        // auto-select the first item.
+        onCountChanged: {
+            if (count > 0) {
+                window.selectedIndex = 0
+            } else {
+                window.selectedIndex = -1
+            }
         }
     }
 
-    Component.onCompleted: {
-        Qt.callLater(() => {
-                   console.log("Qt Version:", qtVersion)
-                   // Qt, Qt.version => undefined ?
-               })
+    // ── Single source of truth for the selected file ─────────────────────────
+    property int    selectedIndex: -1
+    property url    currentImageUrl:  selectedIndex >= 0 ? dirModel.fileUrl(selectedIndex)  : ""
+    property string currentImageName: selectedIndex >= 0 ? dirModel.fileName(selectedIndex) : ""
+
+    // ── Folder picker dialog ─────────────────────────────────────────────────
+    FolderDialog {
+        id: folderDialog
+        title: "Bildverzeichnis wählen"
+        onAccepted: {
+            // FolderDialog returns a file:// URL – convert to a plain local path
+            var raw  = selectedFolder.toString()
+            var path = raw.replace(/^file:\/\/\//, "")   // Windows: file:///C:/…
+                          .replace(/^file:\/\//, "")     // Unix:    file:///home/…
+                          .replace(/%20/g, " ")
+            dirModel.folder        = path
+            appSettings.imageFolder = path
+            dirField.text           = path
+        }
+    }
+
+    // ── Root content: resizable two-panel layout ─────────────────────────────
+    SplitView {
+        anchors.fill: parent
+        orientation:  Qt.Horizontal
+        handle: Rectangle {
+            implicitWidth: 4
+            color: SplitHandle.hovered || SplitHandle.pressed ? "#5566cc" : "#2a2a3a"
+        }
+
+        // ── Left panel: file list ─────────────────────────────────────────────
+        Rectangle {
+            SplitView.preferredWidth: 260
+            SplitView.minimumWidth:   140
+            SplitView.maximumWidth:   480
+            color: "#1a1a2e"
+
+            ColumnLayout {
+                anchors.fill:    parent
+                anchors.margins: 8
+                spacing: 6
+
+                Label {
+                    text: qsTr("Infos: Qt Version: ")+qtVersion
+                    color: "#cccccc"
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                // Headline
+                Label {
+                    text:  "Bilder"
+                    font { bold: true; pixelSize: 14 }
+                    color: "#cccccc"
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                // ── Folder selector ───────────────────────────────────────────
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 4
+
+                    TextField {
+                        id: dirField
+                        Layout.fillWidth: true
+                        text: appSettings.imageFolder
+                        placeholderText: "Pfad eingeben…"
+                        font.pixelSize: 11
+                        onAccepted: {
+                            var path = text.replace(/^file:\/\/\//, "")
+                                           .replace(/^file:\/\//, "")
+                            dirModel.folder        = path
+                            appSettings.imageFolder = path
+                            text = path
+                        }
+                    }
+
+                    Button {
+                        text:          "…"
+                        implicitWidth: 36
+                        onClicked:     folderDialog.open()
+                        ToolTip.text:    "Verzeichnis auswählen"
+                        ToolTip.visible: hovered
+                        ToolTip.delay:   600
+                    }
+                }
+
+                // Image count
+                Label {
+                    text:  dirModel.count + " Bild(er)"
+                    color: "#888888"
+                    font.pixelSize: 11
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                // ── File list view ────────────────────────────────────────────
+                ListView {
+                    id: fileList
+                    Layout.fillWidth:  true
+                    Layout.fillHeight: true
+                    clip:  true
+                    model: dirModel
+                    currentIndex: window.selectedIndex
+                    keyNavigationEnabled: true
+                    focus: true
+
+                    Keys.onUpPressed:   if (currentIndex > 0)         window.selectedIndex--
+                    Keys.onDownPressed: if (currentIndex < count - 1) window.selectedIndex++
+                    Keys.onPressed: (event) => {
+                        if (event.key === Qt.Key_Home && count > 0) {
+                            window.selectedIndex = 0
+                            event.accepted = true
+                        } else if (event.key === Qt.Key_End && count > 0) {
+                            window.selectedIndex = count - 1
+                            event.accepted = true
+                        }
+                    }
+
+                    ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
+
+                    delegate: ItemDelegate {
+                        id: del
+                        required property int    index
+                        required property string fileName
+                        required property url    fileUrl
+
+                        width:         ListView.view.width
+                        highlighted:   ListView.view.currentIndex === index
+                        padding:       0
+                        topPadding:    3
+                        bottomPadding: 3
+                        leftPadding:   8
+                        rightPadding:  8
+
+                        contentItem: Text {
+                            text:  del.fileName
+                            color: del.highlighted ? "#ffffff" : "#aaaaaa"
+                            font { pixelSize: 12; bold: del.highlighted }
+                            elide: Text.ElideMiddle
+                            verticalAlignment: Text.AlignVCenter
+                        }
+
+                        background: Rectangle {
+                            color: del.highlighted ? "#3a3a6e"
+                                 : del.hovered     ? "#252548"
+                                 :                   "transparent"
+                            radius: 4
+                        }
+
+                        onClicked: window.selectedIndex = index
+                    }
+                }
+            }
+        }
+
+        // ── Right panel: image preview ────────────────────────────────────────
+        Rectangle {
+            SplitView.fillWidth: true
+            color: "#0d0d1a"
+
+            // ── Placeholder when no image is selected ─────────────────────────
+            Label {
+                anchors.centerIn: parent
+                text: dirModel.count === 0
+                      ? "Verzeichnis enthält keine Bilder.\nWählen Sie ein Verzeichnis mit dem ‹…›-Button."
+                      : "Wählen Sie ein Bild aus der Liste."
+                color: "#555555"
+                font.pixelSize: 16
+                horizontalAlignment: Text.AlignHCenter
+                lineHeight: 1.6
+                visible: window.currentImageUrl.toString() === ""
+            }
+
+            // ── Zoomable / pannable image viewport ────────────────────────────
+            Item {
+                id: imageViewport
+                anchors {
+                    top:    parent.top
+                    left:   parent.left
+                    right:  parent.right
+                    bottom: captionBar.top
+                    margins:      16
+                    bottomMargin:  4
+                }
+                clip:    true
+                visible: window.currentImageUrl.toString() !== ""
+
+                property real zoomFactor: 1.0
+                property real panX: 0.0
+                property real panY: 0.0
+
+                function resetView() {
+                    zoomFactor = 1.0
+                    panX = 0.0
+                    panY = 0.0
+                }
+
+                // Reset whenever a different image is selected
+                Connections {
+                    target: window
+                    function onSelectedIndexChanged() { imageViewport.resetView() }
+                }
+
+                // ── The image itself ───────────────────────────────────────────
+                Image {
+                    id: imagePreview
+                    width:           imageViewport.width
+                    height:          imageViewport.height
+                    x:               imageViewport.panX
+                    y:               imageViewport.panY
+                    scale:           imageViewport.zoomFactor
+                    transformOrigin: Item.TopLeft
+                    source:          window.currentImageUrl
+                    fillMode:        Image.PreserveAspectFit
+                    smooth:          true
+                    asynchronous:    true
+                    cache:           false
+                }
+
+                // ── Mouse-wheel zoom ───────────────────────────────────────────
+                WheelHandler {
+                    acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+                    onWheel: (event) => {
+                        var delta   = event.angleDelta.y !== 0
+                                      ? event.angleDelta.y : event.angleDelta.x
+                        var factor  = delta > 0 ? 1.15 : (1.0 / 1.15)
+                        var newZoom = Math.max(0.05, Math.min(20.0,
+                                         imageViewport.zoomFactor * factor))
+                        var ratio   = newZoom / imageViewport.zoomFactor
+                        // Keep the pixel under the cursor fixed
+                        imageViewport.panX = event.x * (1.0 - ratio) + imageViewport.panX * ratio
+                        imageViewport.panY = event.y * (1.0 - ratio) + imageViewport.panY * ratio
+                        imageViewport.zoomFactor = newZoom
+                        event.accepted = true
+                    }
+                }
+
+                // ── Drag to pan (mouse + 1-finger touch) ──────────────────────
+                DragHandler {
+                    id: dragHandler
+                    target: null
+                    acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchScreen
+
+                    property real startPanX: 0.0
+                    property real startPanY: 0.0
+
+                    onActiveChanged: {
+                        if (active) {
+                            startPanX = imageViewport.panX
+                            startPanY = imageViewport.panY
+                        }
+                    }
+                    onTranslationChanged: {
+                        if (active) {
+                            imageViewport.panX = startPanX + translation.x
+                            imageViewport.panY = startPanY + translation.y
+                        }
+                    }
+                    cursorShape: active ? Qt.ClosedHandCursor : Qt.OpenHandCursor
+                }
+
+                // ── Pinch to zoom + pan (2-finger touch / trackpad) ───────────
+                PinchHandler {
+                    id: pinchHandler
+                    target: null
+                    acceptedDevices: PointerDevice.TouchScreen | PointerDevice.TouchPad
+                    minimumPointCount: 2
+
+                    property real  startZoom:     1.0
+                    property real  startPanX:     0.0
+                    property real  startPanY:     0.0
+                    property point startCentroid: Qt.point(0, 0)
+
+                    onActiveChanged: {
+                        if (active) {
+                            startZoom     = imageViewport.zoomFactor
+                            startPanX     = imageViewport.panX
+                            startPanY     = imageViewport.panY
+                            startCentroid = centroid.position
+                        }
+                    }
+
+                    // Called when either scale OR centroid changes
+                    onActiveScaleChanged: applyPinch()
+                    onCentroidChanged:    if (active) applyPinch()
+
+                    function applyPinch() {
+                        var newZoom = Math.max(0.05, Math.min(20.0,
+                                         startZoom * activeScale))
+                        var s = newZoom / startZoom
+                        // Keep the start-centroid image point under the
+                        // current centroid, and honour centroid translation
+                        imageViewport.panX = centroid.position.x
+                                           - (startCentroid.x - startPanX) * s
+                        imageViewport.panY = centroid.position.y
+                                           - (startCentroid.y - startPanY) * s
+                        imageViewport.zoomFactor = newZoom
+                    }
+                }
+
+                // ── Double-click / double-tap resets view ──────────────────────
+                TapHandler {
+                    acceptedButtons: Qt.LeftButton
+                    gesturePolicy:   TapHandler.DoubleTapWithinBounds
+                    onDoubleTapped:  imageViewport.resetView()
+                }
+
+                // ── Zoom-level indicator (top-right corner) ────────────────────
+                Rectangle {
+                    anchors { top: parent.top; right: parent.right; margins: 6 }
+                    width:   zoomLabel.implicitWidth + 10
+                    height:  zoomLabel.implicitHeight + 6
+                    radius:  3
+                    color:   "#b0000000"
+                    visible: imageViewport.zoomFactor !== 1.0
+
+                    Label {
+                        id: zoomLabel
+                        anchors.centerIn: parent
+                        text:  Math.round(imageViewport.zoomFactor * 100) + " %"
+                        color: "#aaaaaa"
+                        font.pixelSize: 11
+                    }
+                }
+            }
+
+            // ── Loading spinner ───────────────────────────────────────────────
+            BusyIndicator {
+                anchors.centerIn: parent
+                running: imagePreview.status === Image.Loading
+                visible: running
+            }
+
+            // ── Load-error message ────────────────────────────────────────────
+            Label {
+                anchors.centerIn: parent
+                text:  "Bild konnte nicht geladen werden."
+                color: "#aa4444"
+                font.pixelSize: 14
+                visible: imagePreview.status === Image.Error
+            }
+
+            // ── Caption bar ───────────────────────────────────────────────────
+            Rectangle {
+                id: captionBar
+                anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
+                height: 28
+                color:  "#0a0a14"
+
+                Label {
+                    anchors.centerIn: parent
+                    width: parent.width - 24
+                    text:  window.currentImageName
+                    color: "#888888"
+                    font.pixelSize: 12
+                    elide: Text.ElideMiddle
+                    horizontalAlignment: Text.AlignHCenter
+                }
+            }
+        }
     }
 }

@@ -1,7 +1,9 @@
 # DiaBox
 An app to backup and label images.
 
-* Github Actions:
+## Github Actions Status
+
+Platforms:
     * Linux: [![Linux Desktop Build](https://github.com/mneuroth/DiaBox/actions/workflows/linux.yml/badge.svg)](https://github.com/mneuroth/DiaBox/actions/workflows/linux.yml)
 	* MacOS: [![MacOS Desktop Build](https://github.com/mneuroth/DiaBox/actions/workflows/macos.yml/badge.svg)](https://github.com/mneuroth/DiaBox/actions/workflows/macos.yml)
     * Windows: [![Windows Desktop Build](https://github.com/mneuroth/DiaBox/actions/workflows/windows.yml/badge.svg)](https://github.com/mneuroth/DiaBox/actions/workflows/windows.yml)
