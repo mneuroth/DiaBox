@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 3.21)
-project(DiaBox VERSION 1.0 LANGUAGES CXX)
+project(DiaBox VERSION 0.2 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(QT_QML_GENERATE_QMLLS_INI ON)
 set(CMAKE_AUTOMOC ON)
 
 find_package(Qt6 6.9 REQUIRED COMPONENTS Quick QuickControls2)
@@ -14,8 +15,8 @@ qt_add_executable(dia_box
 )
 
 qt_add_qml_module(dia_box
-    URI dia_box
-    VERSION 1.0
+    URI DiaBox
+    VERSION 0.2
     QML_FILES
         Main.qml
     SOURCES
