@@ -88,6 +88,46 @@ ApplicationWindow {
                     Layout.alignment: Qt.AlignHCenter
                 }
 
+                Label {
+                    text:  Math.round(imageViewport.zoomFactor * 100) + " %"
+                    color: "#888888"
+                    font.pixelSize: 11
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                Label {
+                    text: window.currentImageUrl !== ""
+                          ? Math.round(imagePreview.paintedWidth) + " × "
+                            + Math.round(imagePreview.paintedHeight) + " px"
+                          : ""
+                    color: "#888888"
+                    font.pixelSize: 11
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                Label {
+                    text: window.screen.width + " × " + window.screen.height + " px"
+                    color: "#888888"
+                    font.pixelSize: 11
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                Label {
+                    text: Math.round(window.screen.devicePixelRatio * 100) + " %"
+                    color: "#888888"
+                    font.pixelSize: 11
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                Label {
+                    text: window.currentImageUrl !== "" && imagePreview.status === Image.Ready
+                          ? imagePreview.implicitWidth + " × " + imagePreview.implicitHeight + " px"
+                          : ""
+                    color: "#888888"
+                    font.pixelSize: 11
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
                 // Headline
                 Label {
                     text:  "Bilder"
@@ -166,19 +206,38 @@ ApplicationWindow {
                         required property url    fileUrl
 
                         width:         ListView.view.width
+                        height:        100
                         highlighted:   ListView.view.currentIndex === index
                         padding:       0
-                        topPadding:    3
-                        bottomPadding: 3
-                        leftPadding:   8
-                        rightPadding:  8
+                        topPadding:    4
+                        bottomPadding: 4
+                        leftPadding:   6
+                        rightPadding:  6
 
-                        contentItem: Text {
-                            text:  del.fileName
-                            color: del.highlighted ? "#ffffff" : "#aaaaaa"
-                            font { pixelSize: 12; bold: del.highlighted }
-                            elide: Text.ElideMiddle
-                            verticalAlignment: Text.AlignVCenter
+                        contentItem: Row {
+                            anchors.fill: parent
+                            spacing: 8
+
+                            Image {
+                                source:          del.fileUrl
+                                width:           parent.width - idFileName.width //80
+                                height:          80
+                                fillMode:        Image.PreserveAspectFit
+                                smooth:          true
+                                asynchronous:    true
+                                cache:           true
+                                visible:         del.fileUrl !== ""
+                            }
+
+                            Text {
+                                id: idFileName
+                                text:  del.fileName
+                                color: del.highlighted ? "#ffffff" : "#aaaaaa"
+                                font { pixelSize: 12; bold: del.highlighted }
+                                //elide: Text.ElideMiddle
+                                //verticalAlignment: Text.AlignVCenter
+                                Layout.fillWidth: true
+                            }
                         }
 
                         background: Rectangle {
