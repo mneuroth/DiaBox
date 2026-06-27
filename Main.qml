@@ -78,13 +78,53 @@ ApplicationWindow {
             color: "#1a1a2e"
 
             ColumnLayout {
-                anchors.fill:    parent
+                anchors.top:     parent.top
+                anchors.left:    parent.left
+                anchors.right:   parent.right
                 anchors.margins: 8
                 spacing: 6
 
                 Label {
                     text: qsTr("Infos: Qt Version: ")+qtVersion
                     color: "#cccccc"
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                // ── Folder selector ───────────────────────────────────────────
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 4
+
+                    TextField {
+                        id: dirField
+                        Layout.fillWidth: true
+                        text: appSettings.imageFolder
+                        placeholderText: "Pfad eingeben…"
+                        font.pixelSize: 11
+                        onAccepted: {
+                            var path = text.replace(/^file:\/\/\//, "")
+                                           .replace(/^file:\/\//, "")
+                            dirModel.folder        = path
+                            appSettings.imageFolder = path
+                            text = path
+                        }
+                    }
+
+                    Button {
+                        text:          "…"
+                        implicitWidth: 36
+                        onClicked:     folderDialog.open()
+                        ToolTip.text:    "Verzeichnis auswählen"
+                        ToolTip.visible: hovered
+                        ToolTip.delay:   600
+                    }
+                }
+
+                // Image count
+                Label {
+                    text:  dirModel.count + " Bild(er)"
+                    color: "#888888"
+                    font.pixelSize: 11
                     Layout.alignment: Qt.AlignHCenter
                 }
 
@@ -123,52 +163,6 @@ ApplicationWindow {
                     text: window.currentImageUrl !== "" && imagePreview.status === Image.Ready
                           ? imagePreview.implicitWidth + " × " + imagePreview.implicitHeight + " px"
                           : ""
-                    color: "#888888"
-                    font.pixelSize: 11
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                // Headline
-                Label {
-                    text:  "Verzeichnis"
-                    font { bold: true; pixelSize: 14 }
-                    color: "#cccccc"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                // ── Folder selector ───────────────────────────────────────────
-                RowLayout {
-                    Layout.fillWidth: true
-                    spacing: 4
-
-                    TextField {
-                        id: dirField
-                        Layout.fillWidth: true
-                        text: appSettings.imageFolder
-                        placeholderText: "Pfad eingeben…"
-                        font.pixelSize: 11
-                        onAccepted: {
-                            var path = text.replace(/^file:\/\/\//, "")
-                                           .replace(/^file:\/\//, "")
-                            dirModel.folder        = path
-                            appSettings.imageFolder = path
-                            text = path
-                        }
-                    }
-
-                    Button {
-                        text:          "…"
-                        implicitWidth: 36
-                        onClicked:     folderDialog.open()
-                        ToolTip.text:    "Verzeichnis auswählen"
-                        ToolTip.visible: hovered
-                        ToolTip.delay:   600
-                    }
-                }
-
-                // Image count
-                Label {
-                    text:  dirModel.count + " Bild(er)"
                     color: "#888888"
                     font.pixelSize: 11
                     Layout.alignment: Qt.AlignHCenter
