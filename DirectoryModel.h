@@ -2,6 +2,7 @@
 
 #include <QAbstractListModel>
 #include <QFileSystemWatcher>
+#include <QHash>
 #include <QStringList>
 #include <QUrl>
 #include <QtQml/qqmlregistration.h>
@@ -24,6 +25,7 @@ public:
         FileNameRole = Qt::UserRole + 1,
         FilePathRole,
         FileUrlRole,
+        ThumbnailUrlRole,
     };
     Q_ENUM(Roles)
 
@@ -40,6 +42,7 @@ public:
 
     // ── Helpers callable from QML ────────────────────────────────────────────
     Q_INVOKABLE QUrl    fileUrl(int row)  const;
+    Q_INVOKABLE QUrl    thumbnailUrl(int row) const;
     Q_INVOKABLE QString fileName(int row) const;
 
 signals:
@@ -51,10 +54,14 @@ private slots:
 
 private:
     void refresh();
+    QUrl thumbnailUrlForFile(const QString &filePath) const;
+    QString thumbnailCachePath(const QString &filePath) const;
+    void clearThumbnailCache();
 
     QString             m_folder;
     QStringList         m_files;
     QFileSystemWatcher  m_watcher;
+    mutable QHash<QString, QUrl> m_thumbnailCache;
 
     static const QStringList s_extensions;
 };

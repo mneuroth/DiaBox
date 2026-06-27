@@ -228,7 +228,7 @@ ApplicationWindow {
                                 id: del
                                 required property int    index
                                 required property string fileName
-                                required property url    fileUrl
+                                required property url    thumbnailUrl
 
                                 width:         100
                                 height:        ListView.view.height
@@ -244,14 +244,14 @@ ApplicationWindow {
                                     spacing: 4
 
                                     Image {
-                                        source:       del.fileUrl
+                                        source:       del.thumbnailUrl
                                         width:        parent.width
                                         height:       60
                                         fillMode:     Image.PreserveAspectFit
                                         smooth:       true
                                         asynchronous: true
                                         cache:        true
-                                        visible:      del.fileUrl !== ""
+                                        visible:      del.thumbnailUrl.toString() !== ""
                                     }
 
                                     Text {
