@@ -151,7 +151,12 @@ QUrl DirectoryModel::thumbnailUrlForFile(const QString &filePath) const
         return fallback;
     }
 
-    thumbnail = thumbnail.scaled(QSize(160, 160), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    const QSize maxSize(160, 160);
+    if (thumbnail.width() > thumbnail.height()) {
+        thumbnail = thumbnail.scaledToWidth(maxSize.width(), Qt::SmoothTransformation);
+    } else {
+        thumbnail = thumbnail.scaledToHeight(maxSize.height(), Qt::SmoothTransformation);
+    }
     if (thumbnail.isNull()) {
         const QUrl fallback = QUrl::fromLocalFile(filePath);
         m_thumbnailCache.insert(filePath, fallback);
@@ -179,6 +184,7 @@ QString DirectoryModel::thumbnailCachePath(const QString &filePath) const
     const QByteArray hash = QCryptographicHash::hash(filePath.toUtf8(), QCryptographicHash::Sha256).toHex();
     const QString cacheDir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation)
                              + QStringLiteral("/DiaBox/thumbnails");
+    qDebug() << "CACHE: " << cacheDir << Qt::endl;  // C:/Users/<user>/AppData/Local/mneuroth/DiaBox/cache/DiaBox/thumbnails
     return QDir(cacheDir).absoluteFilePath(QStringLiteral("%1.png").arg(QString::fromUtf8(hash)));
 }
 
