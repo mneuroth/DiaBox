@@ -22,6 +22,8 @@ qt_add_qml_module(dia_box
     SOURCES
         DirectoryModel.h
         DirectoryModel.cpp
+        DirectoryImageCache.h
+        DirectoryImageCache.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
