@@ -8,6 +8,7 @@
 #include "CacheImageProvider.h"
 #include "DirectoryImageCache.h"
 #include "stopwatch.h"
+#include "exifreader.h"
 
 int main(int argc, char *argv[])
 {
@@ -21,6 +22,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     qmlRegisterType<Stopwatch>("Perf", 1, 0, "Stopwatch");
+    qmlRegisterType<ExifReader>("Meta", 1, 0, "ExifReader");
 
     // Register the cache image provider
     engine.addImageProvider("cache", new CacheImageProvider(DirectoryImageCache::instance()));

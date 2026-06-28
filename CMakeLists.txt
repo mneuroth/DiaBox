@@ -28,6 +28,8 @@ qt_add_qml_module(dia_box
         DirectoryImageCache.cpp
         CacheImageProvider.h
         CacheImageProvider.cpp
+        exifreader.h
+        exifreader.cpp
         stopwatch.h
         stopwatch.cpp
         TinyEXIF-1.0.4/TinyEXIF.h

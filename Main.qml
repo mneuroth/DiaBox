@@ -7,6 +7,7 @@ import Qt.labs.settings
 import DiaBox
 
 import Perf
+import Meta
 
 ApplicationWindow {
     id: window
@@ -168,6 +169,35 @@ ApplicationWindow {
                     color: "#888888"
                     font.pixelSize: 11
                     Layout.alignment: Qt.AlignHCenter
+                }
+
+                // Linke EXIF-Leiste
+                Column {
+                    id: exifPanel
+                    width: 250
+                    spacing: 8
+                    padding: 10
+                    Rectangle {
+                        color: "#222"
+                        radius: 4
+                    }
+
+                    Repeater {
+                        model: exifModel
+                        delegate: Text {
+                            text: model.key + ": " + model.value
+                            color: "white"
+                            font.pixelSize: 14
+                        }
+                    }
+                }
+
+                ListModel {
+                    id: exifModel
+                }
+
+                ExifReader {
+                    id: reader
                 }
             }
         }
@@ -348,6 +378,15 @@ ApplicationWindow {
                                 let ns = sw.elapsedNs()
                                 let ms = ns / 1e6
                                 console.log("Image geladen in", ms, "ms")
+                            }
+
+                            let sPath = "" + Qt.resolvedUrl(source)
+                            sPath = sPath.slice(8)  // remove: file:/// from URL
+                            let exif = reader.readExif(sPath)
+                            exifModel.clear()
+
+                            for (let key in exif) {
+                               exifModel.append({ key: key, value: exif[key] })
                             }
                         }
                     }
