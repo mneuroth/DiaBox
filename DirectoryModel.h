@@ -26,6 +26,7 @@ public:
         FilePathRole,
         FileUrlRole,
         ThumbnailUrlRole,
+        ThumbnailImgRole,
     };
     Q_ENUM(Roles)
 
@@ -54,14 +55,13 @@ private slots:
 
 private:
     void refresh();
+    QImage thumbnailForFile(const QString &filePath) const;
     QUrl thumbnailUrlForFile(const QString &filePath) const;
     QString thumbnailCachePath(const QString &filePath) const;
-    void clearThumbnailCache();
 
     QString             m_folder;
     QStringList         m_files;
     QFileSystemWatcher  m_watcher;
-    mutable QHash<QString, QUrl> m_thumbnailCache;
 
     static const QStringList s_extensions;
 };

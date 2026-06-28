@@ -2,11 +2,14 @@
 
 #include <QCryptographicHash>
 #include <QDir>
+#include <QFile>
 #include <QFileInfo>
 #include <QImage>
 #include <QImageReader>
 #include <QStandardPaths>
 #include <QUrl>
+
+#include "DirectoryImageCache.h"
 
 // Supported image extensions (lower-case; upper-case variants are added in refresh())
 const QStringList DirectoryModel::s_extensions = {
@@ -39,6 +42,7 @@ void DirectoryModel::setFolder(const QString &folder)
         m_watcher.removePath(m_folder);
 
     m_folder = folder;
+    DirectoryImageCache::instance()->setDirectoryPath(m_folder);
 
     // Start watching the new path (only if it exists)
     if (QDir(m_folder).exists())
@@ -76,6 +80,10 @@ QVariant DirectoryModel::data(const QModelIndex &index, int role) const
         return QUrl::fromLocalFile(fullPath);
     case ThumbnailUrlRole:
         return thumbnailUrlForFile(fullPath);
+    case ThumbnailImgRole: {
+        // Return image://cache/ URL for the cached thumbnail
+        return QUrl(QString("image://cache/%1").arg(name));
+    }
     }
     return {};
 }
@@ -87,6 +95,7 @@ QHash<int, QByteArray> DirectoryModel::roleNames() const
         { FilePathRole,      "filePath"      },
         { FileUrlRole,       "fileUrl"       },
         { ThumbnailUrlRole,  "thumbnailUrl"  },
+        { ThumbnailImgRole,  "thumbnailImg"  },
     };
 }
 
@@ -121,62 +130,42 @@ void DirectoryModel::onDirectoryChanged(const QString &path)
     refresh();
 }
 
+QImage DirectoryModel::thumbnailForFile(const QString &filePath) const
+{
+    const QFileInfo sourceInfo(filePath);
+    const QString fileName = sourceInfo.fileName();
+
+    const QImage thumbnail = DirectoryImageCache::instance()->thumbnailForFileName(fileName);
+    return thumbnail;
+}
+
 QUrl DirectoryModel::thumbnailUrlForFile(const QString &filePath) const
 {
-    const auto cacheIt = m_thumbnailCache.constFind(filePath);
-    if (cacheIt != m_thumbnailCache.constEnd())
-        return *cacheIt;
-
     const QFileInfo sourceInfo(filePath);
-    if (!sourceInfo.exists()) {
-        const QUrl fallback = QUrl::fromLocalFile(filePath);
-        m_thumbnailCache.insert(filePath, fallback);
-        return fallback;
+    if (!sourceInfo.exists())
+        return QUrl::fromLocalFile(filePath);
+
+    const QString fileName = sourceInfo.fileName();
+    if (!DirectoryImageCache::instance()->hasThumbnail(fileName)) {
+        DirectoryImageCache::instance()->generateThumbnails();
+    }
+
+    const QImage thumbnail = DirectoryImageCache::instance()->thumbnailForFileName(fileName);
+    if (thumbnail.isNull()) {
+        return QUrl::fromLocalFile(filePath);
     }
 
     const QString cachePath = thumbnailCachePath(filePath);
-    if (!cachePath.isEmpty() && QFileInfo::exists(cachePath)) {
-        const QUrl cachedUrl = QUrl::fromLocalFile(cachePath);
-        m_thumbnailCache.insert(filePath, cachedUrl);
-        return cachedUrl;
-    }
-
-    QImageReader reader(filePath);
-    reader.setAutoTransform(true);
-
-    QImage thumbnail = reader.read();
-    if (thumbnail.isNull()) {
-        const QUrl fallback = QUrl::fromLocalFile(filePath);
-        m_thumbnailCache.insert(filePath, fallback);
-        return fallback;
-    }
-
-    const QSize maxSize(160, 160);
-    if (thumbnail.width() > thumbnail.height()) {
-        thumbnail = thumbnail.scaledToWidth(maxSize.width(), Qt::SmoothTransformation);
-    } else {
-        thumbnail = thumbnail.scaledToHeight(maxSize.height(), Qt::SmoothTransformation);
-    }
-    if (thumbnail.isNull()) {
-        const QUrl fallback = QUrl::fromLocalFile(filePath);
-        m_thumbnailCache.insert(filePath, fallback);
-        return fallback;
-    }
-
     const QFileInfo cacheInfo(cachePath);
     if (!cacheInfo.dir().exists()) {
         QDir().mkpath(cacheInfo.absolutePath());
     }
 
-    if (thumbnail.save(cachePath, "PNG")) {
-        const QUrl cachedUrl = QUrl::fromLocalFile(cachePath);
-        m_thumbnailCache.insert(filePath, cachedUrl);
-        return cachedUrl;
+    if (!QFile::exists(cachePath) || QImageReader(cachePath).read().isNull()) {
+        thumbnail.save(cachePath, "PNG");
     }
 
-    const QUrl fallback = QUrl::fromLocalFile(filePath);
-    m_thumbnailCache.insert(filePath, fallback);
-    return fallback;
+    return QUrl::fromLocalFile(cachePath);
 }
 
 QString DirectoryModel::thumbnailCachePath(const QString &filePath) const
@@ -184,13 +173,7 @@ QString DirectoryModel::thumbnailCachePath(const QString &filePath) const
     const QByteArray hash = QCryptographicHash::hash(filePath.toUtf8(), QCryptographicHash::Sha256).toHex();
     const QString cacheDir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation)
                              + QStringLiteral("/DiaBox/thumbnails");
-    qDebug() << "CACHE: " << cacheDir << Qt::endl;  // C:/Users/<user>/AppData/Local/mneuroth/DiaBox/cache/DiaBox/thumbnails
     return QDir(cacheDir).absoluteFilePath(QStringLiteral("%1.png").arg(QString::fromUtf8(hash)));
-}
-
-void DirectoryModel::clearThumbnailCache()
-{
-    m_thumbnailCache.clear();
 }
 
 void DirectoryModel::refresh()
@@ -209,7 +192,6 @@ void DirectoryModel::refresh()
     }
 
     beginResetModel();
-    clearThumbnailCache();
     m_files = files;
     endResetModel();
 

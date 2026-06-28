@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(QT_QML_GENERATE_QMLLS_INI ON)
 set(CMAKE_AUTOMOC ON)
 
+add_definitions(-DTINYEXIF_NO_XMP_SUPPORT=0)
+
 find_package(Qt6 6.9 REQUIRED COMPONENTS Quick QuickControls2)
 
 qt_standard_project_setup(REQUIRES 6.9)
@@ -24,6 +26,12 @@ qt_add_qml_module(dia_box
         DirectoryModel.cpp
         DirectoryImageCache.h
         DirectoryImageCache.cpp
+        CacheImageProvider.h
+        CacheImageProvider.cpp
+        stopwatch.h
+        stopwatch.cpp
+        TinyEXIF-1.0.4/TinyEXIF.h
+        TinyEXIF-1.0.4/TinyEXIF.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

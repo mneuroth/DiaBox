@@ -3,14 +3,129 @@
 #include <QDataStream>
 #include <QDir>
 #include <QFile>
+#include <QImage>
 #include <QImageReader>
 #include <QStandardPaths>
+#include <QByteArray>
 
-#include <QDebug>
+#include <iostream>
+#include <fstream>
+#include <vector>
+
+#include "stopwatch.h"
+
+QByteArray extractThumbnailRawToBuffer(const std::string& imagePath) {
+    Stopwatch timer(0, "extractThumbnailRawToBuffer");
+
+    std::ifstream file(imagePath, std::ios::binary);
+    if (!file) return QByteArray();
+
+    // Gesamte Datei in einen Vektor laden
+    std::vector<uint8_t> buffer((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+
+    size_t firstSOI = std::string::npos;
+    size_t secondSOI = std::string::npos;
+    size_t thumbnailEOI = std::string::npos;
+
+    // Suche nach JPEG-Markern (0xFF, 0xD8) und (0xFF, 0xD9)
+    for (size_t i = 0; i < buffer.size() - 1; ++i) {
+        if (buffer[i] == 0xFF && buffer[i+1] == 0xD8) {
+            if (firstSOI == std::string::npos) {
+                firstSOI = i;
+            } else if (secondSOI == std::string::npos) {
+                secondSOI = i; // Thumbnail Anfang
+            }
+        }
+        if (secondSOI != std::string::npos && buffer[i] == 0xFF && buffer[i+1] == 0xD9) {
+            thumbnailEOI = i + 2; // Thumbnail Ende
+            break;
+        }
+    }
+
+    // Wenn ein valides Thumbnail-Segment gefunden wurde
+    if (secondSOI != std::string::npos && thumbnailEOI != std::string::npos) {
+        size_t thumbnailLength = thumbnailEOI - secondSOI;
+
+        // Daten direkt als QByteArray zurückgeben (kopiert die Rohdaten in Qt-Speicher)
+        return QByteArray(reinterpret_cast<const char*>(&buffer[secondSOI]), static_cast<int>(thumbnailLength));
+    }
+
+    return QByteArray(); // Leer, falls kein Thumbnail gefunden wurde
+}
+
+QByteArray extractThumbnailFast(const std::string& imagePath) {
+    Stopwatch timer(0, "extractThumbnailFast");
+
+    std::ifstream file(imagePath, std::ios::binary);
+    if (!file) return QByteArray();
+
+    // EXIF APP1-Segmente sind laut JPEG-Spezifikation auf maximal 64 KB begrenzt.
+    // Wir lesen daher NUR die ersten 65.536 Bytes ein. Das spart 99% des I/O-Overheads!
+    const size_t maxHeaderSize = 65536;
+    std::vector<uint8_t> headerBuffer(maxHeaderSize);
+
+    file.read(reinterpret_cast<char*>(headerBuffer.data()), maxHeaderSize);
+    std::streamsize bytesRead = file.gcount();
+
+    if (bytesRead < 4) return QByteArray();
+
+    size_t firstSOI = std::string::npos;
+    size_t secondSOI = std::string::npos;
+    size_t thumbnailEOI = std::string::npos;
+
+    // Wir durchsuchen nur den winzigen Header im RAM
+    for (size_t i = 0; i < static_cast<size_t>(bytesRead) - 1; ++i) {
+        if (headerBuffer[i] == 0xFF && headerBuffer[i+1] == 0xD8) {
+            if (firstSOI == std::string::npos) {
+                firstSOI = i; // Hauptbild-Anfang (ganz oben in der Datei)
+            } else {
+                secondSOI = i; // Thumbnail-Anfang im EXIF-Header gefunden!
+                break;         // Schleife sofort abbrechen!
+            }
+        }
+    }
+
+    // Wenn der Thumbnail-Anfang gefunden wurde, suchen wir das Ende (EOI: 0xFFD9)
+    if (secondSOI != std::string::npos) {
+        for (size_t i = secondSOI; i < static_cast<size_t>(bytesRead) - 1; ++i) {
+            if (headerBuffer[i] == 0xFF && headerBuffer[i+1] == 0xD9) {
+                thumbnailEOI = i + 2; // Thumbnail-Ende gefunden
+                break;
+            }
+        }
+    }
+
+    // Falls gefunden, direkt den extrahierten Bereich in das QByteArray kopieren
+    if (secondSOI != std::string::npos && thumbnailEOI != std::string::npos) {
+        size_t thumbLength = thumbnailEOI - secondSOI;
+        return QByteArray(reinterpret_cast<const char*>(&headerBuffer[secondSOI]), static_cast<int>(thumbLength));
+    }
+
+    return QByteArray(); // Kein eingebettetes JPEG-Thumbnail im Header vorhanden
+}
+
+QImage extractThumbnail(const std::string& imagePath) {
+    QByteArray data = extractThumbnailFast(imagePath);
+    QImage thumbnailImage;
+    if (thumbnailImage.loadFromData(data)) {
+        return thumbnailImage;
+    }
+    return QImage();
+}
 
 const QStringList DirectoryImageCache::s_supportedExtensions = {
     "jpg", "jpeg", "png", "gif", "bmp", "webp", "svg", "tiff", "tif"
 };
+
+std::unique_ptr<DirectoryImageCache> DirectoryImageCache::s_instance = nullptr;
+
+DirectoryImageCache *DirectoryImageCache::instance()
+{
+    if (!s_instance) {
+        s_instance = std::make_unique<DirectoryImageCache>();
+    }
+    return s_instance.get();
+}
 
 DirectoryImageCache::DirectoryImageCache(const QString &directoryPath, QObject *parent)
     : QObject(parent)
@@ -50,9 +165,10 @@ void DirectoryImageCache::generateThumbnails()
         CacheItem item;
         item.filePath = filePath;
         item.lastModified = info.lastModified();
-        item.thumbnail = createThumbnail(filePath);
-        if (!item.thumbnail.isNull())
+        item.thumbnail = extractThumbnail(filePath.toStdString().c_str()); //createThumbnail(filePath);
+        if (!item.thumbnail.isNull()) {
             m_cache.insert(fileName, std::move(item));
+        }
     }
 }
 
@@ -76,7 +192,7 @@ bool DirectoryImageCache::update()
             CacheItem item;
             item.filePath = filePath;
             item.lastModified = lastModified;
-            item.thumbnail = createThumbnail(filePath);
+            item.thumbnail = extractThumbnail(filePath.toStdString().c_str()); //createThumbnail(filePath);
             newCache.insert(fileName, std::move(item));
             changed = true;
         }
@@ -210,6 +326,8 @@ void DirectoryImageCache::buildFileList(QList<QFileInfo> &fileInfos) const
 
 QImage DirectoryImageCache::createThumbnail(const QString &filePath) const
 {
+    Stopwatch timer(0, "createThumbnail");
+
     QImageReader reader(filePath);
     reader.setAutoTransform(true);
     QImage image = reader.read();

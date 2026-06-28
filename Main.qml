@@ -6,6 +6,8 @@ import QtQuick.Dialogs
 import Qt.labs.settings
 import DiaBox
 
+import Perf
+
 ApplicationWindow {
     id: window
     width:       1200
@@ -229,6 +231,7 @@ ApplicationWindow {
                                 required property int    index
                                 required property string fileName
                                 required property url    thumbnailUrl
+                                required property var    thumbnailImg
 
                                 width:         100
                                 height:        ListView.view.height
@@ -244,14 +247,14 @@ ApplicationWindow {
                                     spacing: 4
 
                                     Image {
-                                        source:       del.thumbnailUrl
+                                        source:       del.thumbnailImg
                                         width:        parent.width
                                         height:       60
                                         fillMode:     Image.PreserveAspectFit
                                         smooth:       true
                                         asynchronous: true
                                         cache:        true
-                                        visible:      del.thumbnailUrl.toString() !== ""
+                                        visible:      del.thumbnailImg.toString() !== ""
                                     }
 
                                     Text {
@@ -317,6 +320,10 @@ ApplicationWindow {
                         function onSelectedIndexChanged() { imageViewport.resetView() }
                     }
 
+                    Stopwatch {
+                        id: sw
+                    }
+
                     // ── The image itself
                     Image {
                         id: imagePreview
@@ -331,6 +338,18 @@ ApplicationWindow {
                         smooth:          true
                         asynchronous:    true
                         cache:           false
+
+                        onSourceChanged: {
+                            sw.start()   // Startpunkt
+                        }
+
+                        onStatusChanged: {
+                            if (status === Image.Ready) {
+                                let ns = sw.elapsedNs()
+                                let ms = ns / 1e6
+                                console.log("Image geladen in", ms, "ms")
+                            }
+                        }
                     }
 
                     // ── Mouse-wheel zoom

@@ -17,6 +17,9 @@ class DirectoryImageCache : public QObject
 public:
     explicit DirectoryImageCache(const QString &directoryPath = QString(), QObject *parent = nullptr);
 
+    // Singleton accessor
+    static DirectoryImageCache *instance();
+
     void setDirectoryPath(const QString &directoryPath);
     QString directoryPath() const;
 
@@ -49,6 +52,8 @@ private:
     QString m_directoryPath;
     QHash<QString, CacheItem> m_cache;
     QFileSystemWatcher m_watcher;
+
+    static std::unique_ptr<DirectoryImageCache> s_instance;
 
     static const QStringList s_supportedExtensions;
 };

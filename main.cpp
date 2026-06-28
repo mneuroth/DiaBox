@@ -5,6 +5,10 @@
 #include <QtGlobal>
 #include <QtVersion>
 
+#include "CacheImageProvider.h"
+#include "DirectoryImageCache.h"
+#include "stopwatch.h"
+
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
@@ -15,6 +19,11 @@ int main(int argc, char *argv[])
     QQuickStyle::setStyle("Universal");
 
     QQmlApplicationEngine engine;
+
+    qmlRegisterType<Stopwatch>("Perf", 1, 0, "Stopwatch");
+
+    // Register the cache image provider
+    engine.addImageProvider("cache", new CacheImageProvider(DirectoryImageCache::instance()));
 
     engine.rootContext()->setContextProperty("qtVersion", QString(qVersion()));
 
