@@ -1,7 +1,8 @@
-#include "ExifReader.h"
-#include "TinyEXIF-1.0.4/TinyEXIF.h"
 #include <QFile>
 #include <QDebug>
+
+#include "exifreader.h"
+#include "TinyEXIF-1.0.4/TinyEXIF.h"
 
 ExifReader::ExifReader(QObject *parent)
     : QObject(parent)
