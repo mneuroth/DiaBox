@@ -1,17 +1,21 @@
 #pragma once
 
 #include <QDateTime>
+#include <QFileSystemWatcher>
 #include <QHash>
 #include <QImage>
 #include <QList>
 #include <QFileInfo>
+#include <QObject>
 #include <QString>
 #include <QStringList>
 
-class DirectoryImageCache
+class DirectoryImageCache : public QObject
 {
+    Q_OBJECT
+
 public:
-    explicit DirectoryImageCache(const QString &directoryPath = QString());
+    explicit DirectoryImageCache(const QString &directoryPath = QString(), QObject *parent = nullptr);
 
     void setDirectoryPath(const QString &directoryPath);
     QString directoryPath() const;
@@ -27,6 +31,9 @@ public:
     QStringList imageFileNames() const;
     void clear();
 
+private slots:
+    void onDirectoryChanged(const QString &path);
+
 private:
     struct CacheItem {
         QString   filePath;
@@ -37,9 +44,11 @@ private:
     void buildFileList(QList<QFileInfo> &fileInfos) const;
     QImage createThumbnail(const QString &filePath) const;
     static bool isImageFile(const QFileInfo &fileInfo);
+    void updateWatcher();
 
     QString m_directoryPath;
     QHash<QString, CacheItem> m_cache;
+    QFileSystemWatcher m_watcher;
 
     static const QStringList s_supportedExtensions;
 };

@@ -6,14 +6,20 @@
 #include <QImageReader>
 #include <QStandardPaths>
 
+#include <QDebug>
+
 const QStringList DirectoryImageCache::s_supportedExtensions = {
     "jpg", "jpeg", "png", "gif", "bmp", "webp", "svg", "tiff", "tif"
 };
 
-DirectoryImageCache::DirectoryImageCache(const QString &directoryPath)
-    : m_directoryPath(directoryPath)
+DirectoryImageCache::DirectoryImageCache(const QString &directoryPath, QObject *parent)
+    : QObject(parent)
+    , m_directoryPath(directoryPath)
 {
-    generateThumbnails()
+    connect(&m_watcher, &QFileSystemWatcher::directoryChanged,
+            this,       &DirectoryImageCache::onDirectoryChanged);
+    updateWatcher();
+    generateThumbnails();
 }
 
 void DirectoryImageCache::setDirectoryPath(const QString &directoryPath)
@@ -22,6 +28,7 @@ void DirectoryImageCache::setDirectoryPath(const QString &directoryPath)
         return;
 
     m_directoryPath = directoryPath;
+    updateWatcher();
     clear();
     generateThumbnails();
 }
@@ -123,6 +130,7 @@ bool DirectoryImageCache::load(const QString &cacheFilePath)
     QString loadedPath;
     in >> loadedPath;
     m_directoryPath = std::move(loadedPath);
+    updateWatcher();
 
     quint32 itemCount;
     in >> itemCount;
@@ -139,6 +147,27 @@ bool DirectoryImageCache::load(const QString &cacheFilePath)
     }
 
     return file.error() == QFileDevice::NoError;
+}
+
+void DirectoryImageCache::updateWatcher()
+{
+    const QString normalizedPath = QDir::cleanPath(m_directoryPath);
+
+    if (m_watcher.directories().contains(normalizedPath))
+        return;
+
+    if (!m_watcher.directories().isEmpty())
+        m_watcher.removePaths(m_watcher.directories());
+
+    if (!normalizedPath.isEmpty() && QDir(normalizedPath).exists()) {
+        m_watcher.addPath(normalizedPath);
+    }
+}
+
+void DirectoryImageCache::onDirectoryChanged(const QString &path)
+{
+    Q_UNUSED(path)
+    update();
 }
 
 QImage DirectoryImageCache::thumbnailForFileName(const QString &fileName) const
