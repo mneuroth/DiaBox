@@ -204,71 +204,124 @@ ApplicationWindow {
                     }
                 }
 
-                // Image count
-                Label {
-                    text:  dirModel.count + " Bild(er)"
-                    color: darkTextColor
-                    font.pixelSize: 11
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                Label {
-                    text:  Math.round(imageViewport.zoomFactor * 100) + " %"
-                    color: darkTextColor
-                    font.pixelSize: 11
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                Label {
-                    text: window.currentImageUrl !== ""
-                          ? Math.round(imagePreview.paintedWidth) + " × "
-                            + Math.round(imagePreview.paintedHeight) + " px"
-                          : ""
-                    color: darkTextColor
-                    font.pixelSize: 11
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                Label {
-                    text: window.screen.width + " × " + window.screen.height + " px"
-                    color: darkTextColor
-                    font.pixelSize: 11
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                Label {
-                    text: Math.round(window.screen.devicePixelRatio * 100) + " %"
-                    color: darkTextColor
-                    font.pixelSize: 11
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                Label {
-                    text: window.currentImageUrl !== "" && imagePreview.status === Image.Ready
-                          ? imagePreview.implicitWidth + " × " + imagePreview.implicitHeight + " px"
-                          : ""
-                    color: darkTextColor
-                    font.pixelSize: 11
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                // Linke EXIF-Leiste
-                Column {
-                    id: exifPanel
-                    width: 250
-                    spacing: 8
-                    padding: 10
-                    Rectangle {
-                        color: "#222"
-                        radius: 4
+                SplitView {
+                    id: sidebarSplit
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    Layout.preferredHeight: 240
+                    Layout.minimumHeight: 140
+                    orientation: Qt.Vertical
+                    handle: Rectangle {
+                        implicitHeight: 8
+                        color: SplitHandle.hovered || SplitHandle.pressed ? highlightColor : "#444"
+                        border.color: "#666"
+                        radius: 2
                     }
 
-                    Repeater {
-                        model: exifModel
-                        delegate: Text {
-                            text: model.key + ": " + model.value
-                            color: "white"
-                            font.pixelSize: 14
+                    Rectangle {
+                        id: infoBox
+                        SplitView.preferredHeight: 150
+                        SplitView.minimumHeight: 100
+                        color: darkColor
+                        border.color: textColor
+                        border.width: 1
+                        radius: 4
+
+                        ColumnLayout {
+                            anchors.fill: parent
+                            anchors.margins: 8
+                            spacing: 6
+
+                            Label {
+                                text:  dirModel.count + " Bild(er)"
+                                color: darkTextColor
+                                font.pixelSize: 11
+                                Layout.alignment: Qt.AlignHCenter
+                            }
+
+                            Label {
+                                text:  Math.round(imageViewport.zoomFactor * 100) + " %"
+                                color: darkTextColor
+                                font.pixelSize: 11
+                                Layout.alignment: Qt.AlignHCenter
+                            }
+
+                            Label {
+                                text: window.currentImageUrl !== ""
+                                      ? Math.round(imagePreview.paintedWidth) + " × "
+                                        + Math.round(imagePreview.paintedHeight) + " px"
+                                      : ""
+                                color: darkTextColor
+                                font.pixelSize: 11
+                                Layout.alignment: Qt.AlignHCenter
+                            }
+
+                            Label {
+                                text: window.screen.width + " × " + window.screen.height + " px"
+                                color: darkTextColor
+                                font.pixelSize: 11
+                                Layout.alignment: Qt.AlignHCenter
+                            }
+
+                            Label {
+                                text: Math.round(window.screen.devicePixelRatio * 100) + " %"
+                                color: darkTextColor
+                                font.pixelSize: 11
+                                Layout.alignment: Qt.AlignHCenter
+                            }
+
+                            Label {
+                                text: window.currentImageUrl !== "" && imagePreview.status === Image.Ready
+                                      ? imagePreview.implicitWidth + " × " + imagePreview.implicitHeight + " px"
+                                      : ""
+                                color: darkTextColor
+                                font.pixelSize: 11
+                                Layout.alignment: Qt.AlignHCenter
+                            }
+                        }
+                    }
+
+                    Rectangle {
+                        id: exifBox
+                        SplitView.fillHeight: true
+                        color: darkColor
+                        border.color: textColor
+                        border.width: 1
+                        radius: 4
+
+                        ColumnLayout {
+                            anchors.fill: parent
+                            anchors.margins: 8
+                            spacing: 6
+
+                            Label {
+                                text: "EXIF"
+                                color: textColor
+                                font.pixelSize: 12
+                                font.bold: true
+                                Layout.alignment: Qt.AlignHCenter
+                            }
+
+                            ScrollView {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                clip: true
+
+                                Column {
+                                    width: parent.width
+                                    spacing: 6
+
+                                    Repeater {
+                                        model: exifModel
+                                        delegate: Text {
+                                            text: model.key + ": " + model.value
+                                            color: "white"
+                                            font.pixelSize: 13
+                                            wrapMode: Text.Wrap
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
