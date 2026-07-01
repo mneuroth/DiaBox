@@ -283,7 +283,7 @@ ApplicationWindow {
                             clip: true
 
                             ColumnLayout {
-                                width: parent.width
+                                width: infoExifBox.width - 16
                                 spacing: 6
 
                                 Repeater {
