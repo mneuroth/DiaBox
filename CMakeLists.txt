@@ -34,6 +34,7 @@ qt_add_qml_module(dia_box
         stopwatch.cpp
         TinyEXIF-1.0.4/TinyEXIF.h
         TinyEXIF-1.0.4/TinyEXIF.cpp
+        QML_FILES InfoRow.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

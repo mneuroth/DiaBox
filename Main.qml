@@ -130,16 +130,24 @@ ApplicationWindow {
                     }
                 }
 
-                Rectangle {
-                    id: treeViewRect
+                SplitView {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 250
-                    Layout.minimumHeight: 150
-                    width: parent.width
-                    border.color: textColor
-                    color: darkColor
+                    Layout.fillHeight: true
+                    orientation: Qt.Vertical
+                    handle: Rectangle {
+                        implicitHeight: 4
+                        color: SplitHandle.hovered || SplitHandle.pressed ? highlightColor : darkColor
+                    }
 
-                    TreeView {
+                    Rectangle {
+                        id: treeViewBox
+                        SplitView.preferredHeight: 250
+                        SplitView.minimumHeight: 150
+                        width: parent.width
+                        border.color: textColor
+                        color: darkColor
+
+                        TreeView {
                         id: treeView
                         anchors.fill: parent
                         clip: true
@@ -204,8 +212,8 @@ ApplicationWindow {
 
                 Rectangle {
                     id: infoExifBox
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
+                    SplitView.fillHeight: true
+                    SplitView.minimumHeight: 80
                     color: darkColor
                     border.color: textColor
                     border.width: 1
@@ -218,51 +226,40 @@ ApplicationWindow {
                         clip: true
 
                         // Info section
-                        Label {
-                            text:  dirModel.count + " Bild(er)"
-                            color: darkTextColor
-                            font.pixelSize: 11
-                            Layout.alignment: Qt.AlignHCenter
+                        InfoRow {
+                            leftText: qsTr("Anzahl:")
+                            rightText: dirModel.count + qsTr(" Bild(er)")
+                            textColor: textColor
                         }
-
-                        Label {
-                            text:  Math.round(imageViewport.zoomFactor * 100) + " %"
-                            color: darkTextColor
-                            font.pixelSize: 11
-                            Layout.alignment: Qt.AlignHCenter
+                        InfoRow {
+                            leftText: qsTr("Zoom:")
+                            rightText: Math.round(imageViewport.zoomFactor * 100) + " %"
+                            textColor: textColor
                         }
-
-                        Label {
-                            text: window.currentImageUrl !== ""
-                                  ? Math.round(imagePreview.paintedWidth) + " × "
-                                    + Math.round(imagePreview.paintedHeight) + " px"
-                                  : ""
-                            color: darkTextColor
-                            font.pixelSize: 11
-                            Layout.alignment: Qt.AlignHCenter
+                        InfoRow {
+                            leftText: qsTr("Size:")
+                            rightText: window.currentImageUrl !== ""
+                                       ? Math.round(imagePreview.paintedWidth) + " × "
+                                         + Math.round(imagePreview.paintedHeight) + " px"
+                                       : ""
+                            textColor: textColor
                         }
-
-                        Label {
-                            text: window.screen.width + " × " + window.screen.height + " px"
-                            color: darkTextColor
-                            font.pixelSize: 11
-                            Layout.alignment: Qt.AlignHCenter
+                        InfoRow {
+                            leftText: qsTr("Percent:")
+                            rightText: Math.round(window.screen.devicePixelRatio * 100) + " %"
+                            textColor: textColor
                         }
-
-                        Label {
-                            text: Math.round(window.screen.devicePixelRatio * 100) + " %"
-                            color: darkTextColor
-                            font.pixelSize: 11
-                            Layout.alignment: Qt.AlignHCenter
+                        InfoRow {
+                            leftText: qsTr("View size:")
+                            rightText: window.screen.width + " × " + window.screen.height + " px"
+                            textColor: textColor
                         }
-
-                        Label {
-                            text: window.currentImageUrl !== "" && imagePreview.status === Image.Ready
-                                  ? imagePreview.implicitWidth + " × " + imagePreview.implicitHeight + " px"
-                                  : ""
-                            color: darkTextColor
-                            font.pixelSize: 11
-                            Layout.alignment: Qt.AlignHCenter
+                        InfoRow {
+                            leftText: qsTr("Real Size:")
+                            rightText: window.currentImageUrl !== "" && imagePreview.status === Image.Ready
+                                       ? imagePreview.implicitWidth + " × " + imagePreview.implicitHeight + " px"
+                                       : ""
+                            textColor: textColor
                         }
 
                         Rectangle {
@@ -285,19 +282,17 @@ ApplicationWindow {
                             Layout.fillHeight: true
                             clip: true
 
-                            Column {
+                            ColumnLayout {
                                 width: parent.width
                                 spacing: 6
-                                leftPadding: 4
-                                rightPadding: 4
 
                                 Repeater {
                                     model: exifModel
-                                    delegate: Text {
-                                        text: model.key + ": " + model.value
-                                        color: "white"
-                                        font.pixelSize: 13
-                                        wrapMode: Text.Wrap
+                                    delegate: InfoRow {
+                                        Layout.fillWidth: true
+                                        leftText: model.key + ":"
+                                        rightText: model.value
+                                        textColor: textColor
                                     }
                                 }
                             }
@@ -313,6 +308,7 @@ ApplicationWindow {
                     id: reader
                 }
             }
+        }
         }
 
         // ── Right panel: image preview ────────────────────────────────────────
