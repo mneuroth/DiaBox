@@ -4,6 +4,7 @@ import QtQuick.Controls.Universal
 import QtQuick.Layouts
 import QtQuick.Dialogs
 import Qt.labs.settings
+
 import DiaBox
 
 import Perf
@@ -18,8 +19,16 @@ ApplicationWindow {
     visible: true
     title:   "DiaBox"
 
+    property string textColor: "#cccccc" //"#ffffff"
+    property string grayTextColor: "#555555"
+    property string darkTextColor: "#888888"
+    property string backColor: "#000000"
+    property string highlightColor: "#5566cc"
+    property string darkColor: "#2a2a3a"
+    property string darkDarkColor: "#1a1a2e"
+
     Universal.theme:  Universal.Dark
-    Universal.accent: "#5566cc"
+    Universal.accent: highlightColor
 
     // ── Persistent settings (written to %APPDATA%\PredictiveServices\ImageViewer.ini) ──
     Settings {
@@ -70,7 +79,7 @@ ApplicationWindow {
         orientation:  Qt.Horizontal
         handle: Rectangle {
             implicitWidth: 4
-            color: SplitHandle.hovered || SplitHandle.pressed ? "#5566cc" : "#2a2a3a"
+            color: SplitHandle.hovered || SplitHandle.pressed ? highlightColor : darkColor
         }
 
         // ── Left panel: file list ─────────────────────────────────────────────
@@ -78,7 +87,7 @@ ApplicationWindow {
             SplitView.preferredWidth: 260
             SplitView.minimumWidth:   140
             SplitView.maximumWidth:   480
-            color: "#1a1a2e"
+            color: darkDarkColor
 
             ColumnLayout {
                 anchors.top:     parent.top
@@ -89,7 +98,7 @@ ApplicationWindow {
 
                 Label {
                     text: qsTr("Infos: Qt Version: ")+qtVersion
-                    color: "#cccccc"
+                    color: textColor
                     Layout.alignment: Qt.AlignHCenter
                 }
 
@@ -123,17 +132,89 @@ ApplicationWindow {
                     }
                 }
 
+                Rectangle {
+                    id: treeViewRect
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    width: parent.width
+                    height: 400
+                    border.color: textColor
+                    color: darkColor
+
+                    TreeView {
+                        id: treeView
+                        anchors.fill: parent
+                        clip: true
+                        model: fileSystemModel
+                        rootIndex: rootModelIndex
+
+                        delegate: Item {
+                            implicitHeight: 28
+                            implicitWidth: treeView.width
+
+                            //required property bool isTreeNode
+                            required property bool expanded
+                            required property bool hasChildren
+                            required property int depth
+                            required property int row
+                            required property int column
+                            required property var model
+
+                            Rectangle {
+                                anchors.fill: parent
+                                color: mouseArea.containsMouse ? "#f0f6ff" : "transparent"
+                            }
+
+                            Row {
+                                anchors.verticalCenter: parent.verticalCenter
+                                spacing: 6
+                                x: depth * 20 + 6
+
+                                Text {
+                                    text: hasChildren ? (expanded ? "▼" : "▶") : "•"
+                                    width: 16
+                                }
+
+                                Text {
+                                    text: model.fileName !== "" ? model.fileName : model.filePath
+                                    color: model.isDir ? grayTextColor : textColor
+                                }
+                            }
+
+                            MouseArea {
+                                id: mouseArea
+                                anchors.fill: parent
+                                hoverEnabled: true
+
+                                onClicked: {
+                                    let idx = treeView.index(row, column)
+                                    if (hasChildren) {
+                                        treeView.toggleExpanded(row)
+                                    }
+                                    console.log(">>>"+model.fileName + " "+model.filePath+ " "+ model.isDir)
+                                    console.log("SET NEW PATH")
+                                    dirModel.folder = model.filePath
+                                    dirField.text = model.filePath
+                                    window.selectedIndex = -1
+                                    Qt.callLater(function() { window.selectedIndex = 0 })
+                                    // gulp
+                                }
+                            }
+                        }
+                    }
+                }
+
                 // Image count
                 Label {
                     text:  dirModel.count + " Bild(er)"
-                    color: "#888888"
+                    color: darkTextColor
                     font.pixelSize: 11
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 Label {
                     text:  Math.round(imageViewport.zoomFactor * 100) + " %"
-                    color: "#888888"
+                    color: darkTextColor
                     font.pixelSize: 11
                     Layout.alignment: Qt.AlignHCenter
                 }
@@ -143,21 +224,21 @@ ApplicationWindow {
                           ? Math.round(imagePreview.paintedWidth) + " × "
                             + Math.round(imagePreview.paintedHeight) + " px"
                           : ""
-                    color: "#888888"
+                    color: darkTextColor
                     font.pixelSize: 11
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 Label {
                     text: window.screen.width + " × " + window.screen.height + " px"
-                    color: "#888888"
+                    color: darkTextColor
                     font.pixelSize: 11
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 Label {
                     text: Math.round(window.screen.devicePixelRatio * 100) + " %"
-                    color: "#888888"
+                    color: darkTextColor
                     font.pixelSize: 11
                     Layout.alignment: Qt.AlignHCenter
                 }
@@ -166,7 +247,7 @@ ApplicationWindow {
                     text: window.currentImageUrl !== "" && imagePreview.status === Image.Ready
                           ? imagePreview.implicitWidth + " × " + imagePreview.implicitHeight + " px"
                           : ""
-                    color: "#888888"
+                    color: darkTextColor
                     font.pixelSize: 11
                     Layout.alignment: Qt.AlignHCenter
                 }
@@ -290,7 +371,7 @@ ApplicationWindow {
                                     Text {
                                         width:                    parent.width
                                         text:                     del.fileName
-                                        color:                    del.highlighted ? "#ffffff" : "#aaaaaa"
+                                        color:                    del.highlighted ? textColor : darkTextColor
                                         font { pixelSize: 9; bold: del.highlighted }
                                         elide:                    Text.ElideMiddle
                                         horizontalAlignment:      Text.AlignHCenter
@@ -318,7 +399,7 @@ ApplicationWindow {
                     text: dirModel.count === 0
                           ? "Verzeichnis enthält keine Bilder.\nWählen Sie ein Verzeichnis mit dem ‹…›-Button."
                           : "Wählen Sie ein Bild aus der Liste."
-                    color: "#555555"
+                    color: grayTextColor
                     font.pixelSize: 16
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
@@ -485,14 +566,14 @@ ApplicationWindow {
                         width:   zoomLabel.implicitWidth + 10
                         height:  zoomLabel.implicitHeight + 6
                         radius:  3
-                        color:   "#b0000000"
+                        color:   darkColor
                         visible: imageViewport.zoomFactor !== 1.0
 
                         Label {
                             id: zoomLabel
                             anchors.centerIn: parent
                             text:  Math.round(imageViewport.zoomFactor * 100) + " %"
-                            color: "#aaaaaa"
+                            color: textColor
                             font.pixelSize: 11
                         }
                     }
@@ -510,7 +591,7 @@ ApplicationWindow {
             Label {
                 anchors.centerIn: parent
                 text:  "Bild konnte nicht geladen werden."
-                color: "#aa4444"
+                color: textColor
                 font.pixelSize: 14
                 visible: imagePreview.status === Image.Error
             }
@@ -520,13 +601,13 @@ ApplicationWindow {
                 id: captionBar
                 anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
                 height: 28
-                color:  "#0a0a14"
+                color:  darkColor
 
                 Label {
                     anchors.centerIn: parent
                     width: parent.width - 24
                     text:  window.currentImageName
-                    color: "#888888"
+                    color: darkTextColor
                     font.pixelSize: 12
                     elide: Text.ElideMiddle
                     horizontalAlignment: Text.AlignHCenter

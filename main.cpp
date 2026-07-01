@@ -4,11 +4,14 @@
 #include <QQmlContext>
 #include <QtGlobal>
 #include <QtVersion>
+#include <QFileSystemModel>
 
 #include "CacheImageProvider.h"
 #include "DirectoryImageCache.h"
 #include "stopwatch.h"
 #include "exifreader.h"
+
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {
@@ -28,6 +31,15 @@ int main(int argc, char *argv[])
     engine.addImageProvider("cache", new CacheImageProvider(DirectoryImageCache::instance()));
 
     engine.rootContext()->setContextProperty("qtVersion", QString(qVersion()));
+
+    QFileSystemModel model;
+    model.setRootPath("C:/users/micha/Pictures");
+
+    // Zeige Dateien und Verzeichnisse, aber nicht . und ..
+    model.setFilter(QDir::AllDirs /*| QDir::Files*/ | QDir::NoDotAndDotDot);
+
+    engine.rootContext()->setContextProperty("fileSystemModel", &model);
+    engine.rootContext()->setContextProperty("rootModelIndex", model.index("C:/users/micha/Pictures"));
 
     // Load the root QML component from the registered QML module
     engine.loadFromModule("DiaBox", "Main");

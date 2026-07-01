@@ -42,6 +42,12 @@ QVariantMap ExifReader::readExif(const QString &fileUrl)
     map["ExposureProgram"] = QString::number(exif.ExposureProgram);
     map["FocalLengthMin"] = QString::number(exif.LensInfo.FocalLengthMin);
     map["FocalLengthMax"] = QString::number(exif.LensInfo.FocalLengthMax);
+    map["FocalLengthIn35mm"] = QString::number(exif.LensInfo.FocalLengthIn35mm);
+    map["LensInfoMake"] = QString::fromStdString(exif.LensInfo.Make);
+    map["LensInfoModel"] = QString::fromStdString(exif.LensInfo.Model);
+    map["ISOSpeedRatings"] = QString::number(exif.ISOSpeedRatings);
+
+//    GeoLocation
 
     return map;
 }
